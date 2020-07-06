@@ -127,3 +127,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# conception
+Conception/StarUML-3.2.2.AppImage
