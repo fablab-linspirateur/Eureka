@@ -1,0 +1,17 @@
+# Description des  opération sur Raspberry pi
+## Installation du système Raspberry pi OS :
+###  Configuration :
+ - Créer un groupe "scanners" :
+  - Avec la commande : sudo groupadd scanners
+- Donner les droits d'utilisation des evenement /dev/input/event*
+  - Editer /etc/udev/rules.d/99-scanners.rules
+  - Ajouter KERNEL =="event*", name="input%k",MODE="660",GROUP="scanners"
+  - Ajouter l'utilisateur par defaut  au groupe "scanners": usermod -a -G scanners pi
+### installation de rasp-ap:
+
+### Installation de mosquitto :
+
+### Installation des outils python :
+-  Installation de panda
+## mise en route du service scanner.service
+## mise en route du service sequenceur.service 
