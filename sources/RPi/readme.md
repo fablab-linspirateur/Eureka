@@ -14,4 +14,7 @@
 ### Installation des outils python :
 -  Installation de panda
 ## mise en route du service scanner.service
+copie de scanner.service dans /lib/systemd/system/
+sudo systemctl enable scanner.service
+sudo systemctl start scanner.service
 ## mise en route du service sequenceur.service 
