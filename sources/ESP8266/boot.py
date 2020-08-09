@@ -5,114 +5,121 @@ import network
 from umqtt.robust import MQTTClient
 
 
-def mettre_a_jour(ident):
-    ### mise à jour de la table des couleurs
-    depart = ident[0x000000][0]
-    fin = ident[0x000000][1]
-    nbcouleur = len(ident.keys())-1
+def update(component):
+    # update color table
+    start = component[0x000000][0]
+    end = component[0x000000][1]
+    nbcolor = len(component.keys())-1
     try:
-        pas = int((fin-depart)/nbcouleur)
+        pas = int((end-start)/nbcolor)
     except:
-        pas = int(fin-depart)
+        pas = int(end-start)
 
-    prev = depart
-    for i, c in enumerate(ident.keys()):
+    prev = start
+    for i, c in enumerate(component.keys()):
         if c == 0:
-            #ne pas effacer la couleur 0
+            # keep color 0 (off)
             continue
-        ident[c] = [prev, (i*pas)+depart]
-        prev = ident[c][1]+1
-    ident[c][1] = fin
+        component[c] = [prev, (i*pas)+start]
+        prev = component[c][1]+1
+    component[c][1] = end
 
 
-def ajouter(ident, couleur):
-    ### Ajout d'une couleur à une position
-    ident[couleur] = []
-    print(ident)
-    mettre_a_jour(ident)
+def add(component, color):
+    # add a color to a component
+    component[color] = []
+    print(component)
+    update(component)
 
 
-def enlever(ident, couleur):
-    ### retire une couleur d'une position
+def remove(component, color):
+    # remove a color from a component
     try:
-        del(ident[couleur])
+        del(component[color])
     except:
         return
-    mettre_a_jour(ident)
+    update(component)
 
-def toColor(n24):
-    #conversion en "couleur" neopixel
+
+def to_color(n24):
+    # convert color to neopixel color
     r = n24 >> 16
     v = (0x00ff00 & n24) >> 8
     b = (0x0000ff & n24)
     return (r, v, b)
 
-#get the configuration dictionary from yaml file
-def getConfig():
+
+def get_config():
+    # get the configuration dictionary from yaml file
     f = open("config.yaml")
-    contenu = f.read()
+    content = f.read()
     f.close()
-    choix = contenu.split("\n")
+    choix = content.split("\n")
     config = {}
     for kv in choix:
         if kv != '':
-            key,val = kv.split(":")
+            key, val = kv.split(":")
             key = key.strip()
-            config[key]=val.strip()
+            config[key] = val.strip()
     return config
 
-def getIdents():
-    ### get the list of idents stored in the configuration file
-    f = open("idents.txt")
-    config = f.read()
-    f.close()
-    choix = config.split("\n")
-    idents = []
-    for kv in choix:
-        idents.append(kv.strip())
-    return idents
 
-# mqtt callback
-def sub_cb(topic,payload,Leds,nbleds):
+def get_components():
+    # get the list of components stored in the configuration file
+    f = open("components.txt")
+    content = f.read()
+    f.close()
+    clist = content.split("\n")
+    components = []
+    for kv in clist:
+        components.append(kv.strip())
+    return components
+
+
+def sub_cb(topic, payload, leds, nbleds):
+    # mqtt callback
     print(topic)
     if topic == TOPIC_BLINK:
         blink_active_leds()
     if topic == TOPIC_OFF:
         for i in range(nbleds):
-            Leds[i]=LED_OFF
-        ActiveLeds.clear()
+            leds[i] = LED_OFF
+        Activeleds.clear()
     else:
         for pos in range(nbleds):
-            if topic == ilot+"/"+Idents[pos]:
-                ActiveLeds.add(pos)
-                Leds[pos]=LED_WHITE
+            if topic == ilot+"/"+components[pos]:
+                Activeleds.add(pos)
+                leds[pos] = LED_WHITE
     utime.sleep_ms(100)
-    Leds.write()
+    leds.write()
 
-# initialize mqtt subscriptions
-def init_mqtt(client,Idents,ilot):
+
+def init_mqtt(client, components, ilot):
+    # initialize mqtt subscriptions
     print("connect mqtt...")
     res = client.connect()
-    if not res :
+    if not res:
         client.subscribe(ilot+TOPIC_OFF)
         client.subscribe(ilot+TOPIC_BLINK)
-        for _id in Idents:
+        for _id in components:
             _nom = ilot+"/"+str(_id)
             client.subscribe(_nom)
         client.set_callback(sub_cb)
 
-# make the first LED blink red
+
 def infoleds():
+    # make the first LED blink red
     utime.sleep_ms(500)
-    Leds[0] = LED_RED
-    Leds.write()
+    leds[0] = LED_RED
+    leds.write()
     print(".")
     utime.sleep_ms(500)
-    Leds[0] = LED_OFF
-    Leds.write()
+    leds[0] = LED_OFF
+    leds.write()
 
-# connect to Wifi
-def connection(sta_if, Leds):
+
+def connection(sta_if, leds):
+    # connect to Wifi
     sta_if.active(True)
     while 1:
         print("scan Wlan...")
@@ -124,7 +131,7 @@ def connection(sta_if, Leds):
             if b"raspi-poste1" in n[0]:
                 print("trouvé")
                 trouve = True
-                break 
+                break
             else:
                 print("Pas de RPi !!")
         if trouve:
@@ -137,30 +144,30 @@ def connection(sta_if, Leds):
             print("Ready: ", sta_if.ifconfig())
             break
 
+
 # constants
-configuration = getConfig()
+configuration = get_config()
 chariot = configuration["chariot"]
 ilot = configuration["ilot"]
 TOPIC_OFF = ilot+"/off"
 TOPIC_BLINK = ilot+"/blink"
-LED_OFF =(0,0,0,0)
-LED_WHITE = (0,0,0,100)
+LED_OFF = (0, 0, 0, 0)
+LED_WHITE = (0, 0, 0, 100)
 LED_RED = (100, 0, 0, 0)
 
-# define idents configuration
-Idents = getIdents()
-print("Idents :",Idents)
+# deende components configuration
+components = get_components()
+print("components :", components)
 
-# define LEDs configuration
+# deende leds configuration
 nbleds = 150
-Leds=neopixel.NeoPixel(machine.Pin(2),nbleds)
+leds = neopixel.NeoPixel(machine.Pin(2), nbleds)
 
-# define wifi configuration
+# deende wifi configuration
 sta_if = network.WLAN(network.STA_IF)
 
-# define MQTT configuration
-client = MQTTClient(b"esp8266_01",configuration["broker"],port=1883)
-connection(sta_if,Leds)
-init_mqtt(client, Idents,ilot)
-client.publish(ilot+chariot,b"ok")
-
+# deende MQTT configuration
+client = MQTTClient(b"esp8266_01", configuration["broker"], port=1883)
+connection(sta_if, leds)
+init_mqtt(client, components, ilot)
+client.publish(ilot+chariot, b"ok")
