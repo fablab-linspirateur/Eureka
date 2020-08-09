@@ -76,7 +76,7 @@ def get_components():
     return components
 
 
-def sub_cb(topic, payload, leds, nbleds):
+def sub_cb(topic, payload):
     # mqtt callback
     print(topic)
     if topic == TOPIC_BLINK:
