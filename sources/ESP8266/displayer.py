@@ -6,10 +6,10 @@ import utime
 class displayer(self):
     # displayer class manage mqtt connection + display of information using NeoPixel LEDs
 
-    def __init__(self, components_file, config_file):
+    def __init__(self, components_file="components.txt", config_file="config.yaml"):
         # initialize constants and leds + retrieve file infos and initialize mqtt
         self.LED_OFF = (0, 0, 0, 0)
-        self.LED_WHITE = (0, 0, 0, 100)
+        self.LED_GREEN = (0, 100, 0, 0)
         self.LED_RED = (100, 0, 0, 0)
         self.TOPIC_END = "end"
         self.TOPIC_SEARCH_BASE = "search"
@@ -19,6 +19,9 @@ class displayer(self):
         self.components = self.get_components(components_file)
         self.config = self.get_config(config_file)
         self.init_mqtt(self.config["name"], self.config["broker"])
+        self.displayed = {}
+        for component in self.components:
+            self.displayed[component] = {}
 
     def init_mqtt(self, name, broker):
         # initialize mqtt subscriptions
@@ -96,26 +99,27 @@ class displayer(self):
             prev = component[c][1]+1
         component[c][1] = end
 
-    def add(self, component, color):
+    def add(self, disp_comp, color):
         # add a color to a component
-        component[color] = []
-        self.update(component)
+        disp_comp[color] = []
+        self.update(disp_comp)
 
-    def remove(self, component, color):
+    def remove(self, disp_comp, color):
         # remove a color from a component
         try:
-            del(component[color])
+            del(disp_comp[color])
         except:
             return
-        self.update(component)
+        self.update(disp_comp)
 
     def display_component(self, component, color):
         # display a specific component in a specific color
-        self.add(component, color)
+        self.add(self.displayed[component], color)
 
     def turn_off(self, color):
         # turn off all LEDs that have been turned on for a specific color
-        return null
+        for component in self.components:
+            self.remove(self.displayed[component], color)
 
     def display_error(self, message, color):
         # display an error
@@ -129,9 +133,9 @@ class displayer(self):
         return (r, v, b)
 
     def info_leds(self):
-        # make the first LED blink red
+        # make the first LED blink green
         utime.sleep_ms(500)
-        self.leds[0] = self.LED_RED
+        self.leds[0] = self.LED_GREEN
         self.leds.write()
         print(".")
         utime.sleep_ms(500)
