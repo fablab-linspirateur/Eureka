@@ -1,9 +1,10 @@
 #!/usr/bin/python3
 
-import evdev
-from evdev import ecodes
 import asyncio
+
+import evdev
 import paho.mqtt.client as mqtt
+from evdev import ecodes
 
 client = mqtt.Client()
 client.connect("localhost", 1883)
