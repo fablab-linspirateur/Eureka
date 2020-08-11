@@ -1,7 +1,7 @@
 import utime
 
 
-class displayer(self):
+class displayer():
     # displayer class manage calculation of display of information
 
     def __init__(self, components_file="components.txt"):
