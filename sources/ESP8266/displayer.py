@@ -1,12 +1,10 @@
-import machine
-import neopixel
 import utime
 
 
 class displayer(self):
-    # displayer class manage mqtt connection + display of information using NeoPixel LEDs
+    # displayer class manage calculation of display of information
 
-    def __init__(self, components_file="components.txt", config_file="config.yaml"):
+    def __init__(self, components_file="components.txt"):
         # initialize constants and leds + retrieve file infos and initialize mqtt
         self.LED_OFF = (0, 0, 0, 0)
         self.LED_GREEN = (0, 100, 0, 0)
@@ -14,29 +12,13 @@ class displayer(self):
         self.TOPIC_END = "end"
         self.TOPIC_SEARCH_BASE = "search"
         self.TOPIC_ERROR_BASE = "error"
-        self.NB_LEDS = 150
-        self.leds = neopixel.NeoPixel(machine.Pin(2), self.NB_LEDS)
         self.components = self.get_components(components_file)
-        self.config = self.get_config(config_file)
-        self.init_mqtt(self.config["name"], self.config["broker"])
         self.displayed = {}
         for component in self.components:
             self.displayed[component] = {}
 
-    def init_mqtt(self, name, broker):
-        # initialize mqtt subscriptions
-        print("connect mqtt...")
-        self.client = MQTTClient(
-            name, broker, port=1883)
-        res = self.client.connect()
-        if not res:
-            self.client.subscribe(self.TOPIC_END)
-            self.client.subscribe(self.TOPIC_SEARCH_BASE+"/*")
-            self.client.subscribe(self.TOPIC_ERROR_BASE+"/*")
-            self.client.set_callback(self.sub_cb)
-
-    def sub_cb(self, topic, payload):
-        # mqtt callback
+    def refresh(self, topic, payload):
+        # refresh display on topic action
         etopic = self.explode_topic(topic)
         if etopic["type"] == self.TOPIC_SEARCH_BASE:
             self.display_component(etopic["info"], payload)
@@ -44,29 +26,13 @@ class displayer(self):
             self.turn_off(payload)
         elif etopic["type"] == self.TOPIC_ERROR_BASE:
             self.display_error(etopic["info"], payload)
-        utime.sleep_ms(100)
-        self.leds.write()
-
-    def get_config(self, config_file):
-        # get the configuration dictionary from yaml file
-        f = open(config_file)
-        content = f.read()
-        f.close()
-        choix = content.split("\n")
-        config = {}
-        for kv in choix:
-            if kv != '':
-                key, val = kv.split(":")
-                key = key.strip()
-                config[key] = val.strip()
-        return config
 
     def get_components(self, file_path):
         # get the list of components stored in the configuration file
         f = open(file_path)
-        config = f.read()
+        content = f.read()
         f.close()
-        choix = config.split("\n")
+        choix = content.split("\n")
         components = []
         for kv in choix:
             components.append(kv.strip())
@@ -134,6 +100,7 @@ class displayer(self):
 
     def info_leds(self):
         # make the first LED blink green
+        # TODO move calls to self.leds in boot.py, just keep calculation of color display here
         utime.sleep_ms(500)
         self.leds[0] = self.LED_GREEN
         self.leds.write()
