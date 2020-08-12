@@ -51,32 +51,32 @@ class displayer():
         elif etopic["type"] == self.TOPIC_ERROR_BASE:
             self.display_error(etopic["info"], payload)
 
-    def update(self, component):
-        # update color table
-        start = component[0x00000000][0]
-        end = component[0x00000000][1]
-        nbcolor = len(component.keys())-1
+    def update(self, disp_comp):
+        # update color table for a displayed component
+        start = disp_comp[0x00000000][0]
+        end = disp_comp[0x00000000][1]
+        nbcolor = len(disp_comp.keys())-1
         try:
             pas = int((end-start)/nbcolor)
         except:
             pas = int(end-start)
 
         prev = start
-        for i, c in enumerate(component.keys()):
+        for i, c in enumerate(disp_comp.keys()):
             if c == 0:
                 # ne pas effacer la color 0
                 continue
-            component[c] = [prev, (i*pas)+start]
-            prev = component[c][1]+1
-        component[c][1] = end
+            disp_comp[c] = [prev, (i*pas)+start]
+            prev = disp_comp[c][1]+1
+        disp_comp[c][1] = end
 
     def add(self, disp_comp, color):
-        # add a color to a component
+        # add a color to a displayed component
         disp_comp[color] = []
         self.update(disp_comp)
 
     def remove(self, disp_comp, color):
-        # remove a color from a component
+        # remove a color from a displayed component
         try:
             del(disp_comp[color])
         except:
@@ -84,7 +84,7 @@ class displayer():
         self.update(disp_comp)
 
     def display_component(self, component, color):
-        # display a specific component in a specific color
+        # display a component in a color
         self.add(self.displayed[component], color)
 
     def turn_off(self, color):
