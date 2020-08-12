@@ -6,12 +6,14 @@ class displayer():
         self.LED_OFF = (0, 0, 0, 0)
         self.LED_GREEN = (0, 100, 0, 0)
         self.LED_RED = (100, 0, 0, 0)
+        self.COLOR_BLACK = 0x00000000
+        self.MAX_COLOR = 4
         self.TOPIC_END = "end"
         self.TOPIC_SEARCH_BASE = "search"
         self.TOPIC_ERROR_BASE = "error"
         self.displayed = {}
         for component in self.get_components(components_file):
-            self.displayed[component] = {}
+            self.displayed[component] = {0: [1, 8]}
 
     def explode_topic(self, topic):
         # retrieve type + info contained in a topic
@@ -72,11 +74,17 @@ class displayer():
 
     def add(self, disp_comp, color):
         # add a color to a displayed component
+        if color == self.COLOR_BLACK:
+            return
+        if len(disp_comp) == self.MAX_COLOR + 1:
+            return
         disp_comp[color] = []
         self.update(disp_comp)
 
     def remove(self, disp_comp, color):
         # remove a color from a displayed component
+        if color == self.COLOR_BLACK:
+            return
         try:
             del(disp_comp[color])
         except:
@@ -85,12 +93,13 @@ class displayer():
 
     def display_component(self, component, color):
         # display a component in a color
-        self.add(self.displayed[component], color)
+        if component in self.displayed:
+            self.add(self.displayed[component], color)
 
     def turn_off(self, color):
         # turn off all LEDs that have been turned on for a specific color
-        for component, colors in self.displayed:
-            self.remove(component, color)
+        for component in self.displayed:
+            self.remove(self.displayed[component], color)
 
     def display_error(self, message, color):
         # display an error
