@@ -1,7 +1,4 @@
-import utime
-
-
-class displayer(self):
+class displayer():
     # displayer class manage calculation of display of information
 
     def __init__(self, components_file="components.txt"):
@@ -12,10 +9,37 @@ class displayer(self):
         self.TOPIC_END = "end"
         self.TOPIC_SEARCH_BASE = "search"
         self.TOPIC_ERROR_BASE = "error"
-        self.components = self.get_components(components_file)
         self.displayed = {}
-        for component in self.components:
+        for component in self.get_components(components_file):
             self.displayed[component] = {}
+
+    def explode_topic(self, topic):
+        # retrieve type + info contained in a topic
+        ttopic = topic.split(sep="/", maxsplit=1)
+        if len(ttopic) == 1:
+            return {"base": ttopic[0], "info": ""}
+        else:
+            return {"base": ttopic[0], "info": ttopic[1]}
+
+    def to_color(self, hexa_color):
+        # convert color to neopixel color
+        r = hexa_color >> 24
+        v = (0x00ff0000 & hexa_color) >> 16
+        b = (0x0000ff00 & hexa_color) >> 8
+        w = (0x000000ff & hexa_color)
+        return (r, v, b, w)
+
+    def get_components(self, file_path):
+        # get the list of components stored in the configuration file
+        f = open(file_path)
+        content = f.read()
+        f.close()
+        choix = content.split("\n")
+        components = []
+        for kv in choix:
+            if kv != "":
+                components.append(kv.strip())
+        return components
 
     def refresh(self, topic, payload):
         # refresh display on topic action
@@ -27,29 +51,10 @@ class displayer(self):
         elif etopic["type"] == self.TOPIC_ERROR_BASE:
             self.display_error(etopic["info"], payload)
 
-    def get_components(self, file_path):
-        # get the list of components stored in the configuration file
-        f = open(file_path)
-        content = f.read()
-        f.close()
-        choix = content.split("\n")
-        components = []
-        for kv in choix:
-            components.append(kv.strip())
-        return components
-
-    def explode_topic(self, topic):
-        # retrieve type + info contained in a topic
-        ttopic = topic.split(sep="/", maxsplit=1)
-        if len(ttopic) == 1:
-            return {"base": ttopic[0], "info": ""}
-        else:
-            return {"base": ttopic[0], "info": ttopic[1]}
-
     def update(self, component):
         # update color table
-        start = component[0x000000][0]
-        end = component[0x000000][1]
+        start = component[0x00000000][0]
+        end = component[0x00000000][1]
         nbcolor = len(component.keys())-1
         try:
             pas = int((end-start)/nbcolor)
@@ -84,27 +89,20 @@ class displayer(self):
 
     def turn_off(self, color):
         # turn off all LEDs that have been turned on for a specific color
-        for component in self.components:
-            self.remove(self.displayed[component], color)
+        for component, colors in self.displayed:
+            self.remove(component, color)
 
     def display_error(self, message, color):
         # display an error
         return null
 
-    def to_color(self, n24):
-        # convert color to neopixel color
-        r = n24 >> 16
-        v = (0x00ff00 & n24) >> 8
-        b = (0x0000ff & n24)
-        return (r, v, b)
-
-    def info_leds(self):
+#    def info_leds(self):
         # make the first LED blink green
         # TODO move calls to self.leds in boot.py, just keep calculation of color display here
-        utime.sleep_ms(500)
-        self.leds[0] = self.LED_GREEN
-        self.leds.write()
-        print(".")
-        utime.sleep_ms(500)
-        self.leds[0] = self.LED_OFF
-        self.leds.write()
+        # utime.sleep_ms(500)
+        #self.leds[0] = self.LED_GREEN
+        # self.leds.write()
+        # print(".")
+        # utime.sleep_ms(500)
+        #self.leds[0] = self.LED_OFF
+        # self.leds.write()
