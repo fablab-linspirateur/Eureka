@@ -1,15 +1,9 @@
 import machine
 import neopixel
 import utime
-import network
 from umqtt.robust import MQTTClient
+import displayer
 
-# Just turn the leds on in the Fablab
-Idents=[b"564990",b"559849",b"566970",
-           b"419743",b"551776",b"563582",
-           b"567368",b"419607",b"567367",
-           b"439893",b"805788",b"569558",
-           b"559992",b"418991",b"557031"]
 
 def init_mqtt(name, broker):
     # initialize mqtt subscriptions
@@ -18,58 +12,86 @@ def init_mqtt(name, broker):
         name, broker, port=1883)
     res = client.connect()
     if not res:
+        client.subscribe(disp.TOPIC_END)
+        client.subscribe(disp.TOPIC_SEARCH_BASE+"/#")
+        client.subscribe(disp.TOPIC_ERROR_BASE+"/#")
         client.set_callback(sub_cb)
-        client.subscribe(b"end")
-        client.subscribe(b"search/#")
         return client
     return None
 
-def calculerEmplacement(recherche):
-    tailleDunePosition=10
-    debut=(Idents.index(recherche)*tailleDunePosition)
-    a_piloter = [i for i in range(debut,debut+tailleDunePosition)]
-    return a_piloter
-
-def effacer():
-    for i in range(NB_LEDS):
-        Leds[i]=(0,0,0)
-    Leds.write()
-    
-def piloter(recherche=b"",couleur=b""):
-    print("topic:",recherche," payload:",couleur)
-    if recherche == b"end":
-        effacer()
-        return
-    id = recherche.strip(b"search/")
-    if ( id not in Idents):
-        return
-    for i in calculerEmplacement(id):
-        Leds[i]=(100,100,100)
-    Leds.write()
 
 def sub_cb(topic, payload):
     # mqtt callback
-    piloter(topic,payload)
+    led_colors = disp.refresh(topic, payload)
+    neo_write(led_colors)
 
 
-def do_connect():
+def neo_write(t_color):
+    # write a table of colors to neopixel
+    for i, color in enumerate(t_color):
+        leds[i] = color
+    utime.sleep_ms(100)
+    leds.write()
+
+
+def get_config(config_file="config.yaml"):
+    # get the configuration dictionary from yaml file
+    f = open(config_file)
+    content = f.read()
+    f.close()
+    choix = content.split("\n")
+    config = {}
+    for kv in choix:
+        if kv != '':
+            key, val = kv.split(":")
+            key = key.strip()
+            config[key] = val.strip()
+    return config
+
+
+def do_connect(network, password):
+    # connect to Wifi
     import network
     wlan = network.WLAN(network.STA_IF)
     wlan.active(True)
-    if not wlan.isconnected():
-        print('connecting to network...')
-        wlan.connect('Fablab-inspirateur', 'Choiseul.67220')
-        while not wlan.isconnected():
-            pass
-    print('network config:', wlan.ifconfig())
+    while 1:
+        print("scan Wlan...")
+        _reseaux = wlan.scan()
+        utime.sleep_ms(2000)
+        print("found: %s" % _reseaux)
+        trouve = False
+        for n in _reseaux:
+            if network in n[0]:
+                print("network found")
+                trouve = True
+                break
+            else:
+                print("!! No RPi !!")
+        if trouve:
+            print("connec to", network)
+            while not wlan.isconnected():
+                wlan.connect(network, password)
+                utime.sleep_ms(1000)
+                infoleds()
+                print(".")
+            print("ready: ", wlan.ifconfig())
+            break
+
+
+configuration = get_config()
 
 # define leds configuration
 NB_LEDS = 150
-Leds = neopixel.NeoPixel(machine.Pin(2), NB_LEDS)
+leds = neopixel.NeoPixel(machine.Pin(2), NB_LEDS)
+disp = displayer(nb_leds=NB_LEDS)
+neo_write(disp.all(0x640000))
+utime.sleep_ms(1000)
 
 # define wifi configuration
-do_connect()
+do_connect(config["network"], config["password"])
+neo_write(disp.all(0x640000))
+utime.sleep_ms(1000)
 
 # define MQTT configuration
-client = init_mqtt("demo logistique", "192.168.1.2")
-
+client = init_mqtt(configuration["name"], configuration["broker"])
+neo_write(disp.all())
