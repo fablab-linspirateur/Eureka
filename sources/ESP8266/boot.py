@@ -24,7 +24,12 @@ def init_mqtt(name, broker):
 def sub_cb(topic, payload):
     # mqtt callback
     led_colors = disp.refresh(topic, payload)
-    for i, color in enumerate(led_colors):
+    neo_write(led_colors)
+
+
+def neo_write(t_color):
+    # write a table of colors to neopixel
+    for i, color in enumerate(t_color):
         leds[i] = color
     utime.sleep_ms(100)
     leds.write()
@@ -78,10 +83,13 @@ configuration = get_config()
 NB_LEDS = 150
 leds = neopixel.NeoPixel(machine.Pin(2), NB_LEDS)
 disp = displayer(nb_leds=NB_LEDS)
+neo_write(disp.all(0x640000))
 
 # define wifi configuration
 sta_if = network.WLAN(network.STA_IF)
 connection(sta_if, config["network"], config["password"])
+neo_write(disp.all(0x640000))
 
 # define MQTT configuration
 client = init_mqtt(configuration["name"], configuration["broker"])
+neo_write(disp.all())
