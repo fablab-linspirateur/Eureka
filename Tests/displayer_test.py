@@ -19,6 +19,36 @@ class displayer_test(unittest.TestCase):
         self.assertEqual(etopic["base"], "search")
         self.assertEqual(etopic["info"], "1")
 
+    def test_init_no_arg(self):
+        import os
+        path_bckp = os.getcwd()
+        os.chdir("./Tests")
+        disp = displayer()
+        os.chdir(path_bckp)
+        self.assertEqual((0, 0, 0), disp.LED_OFF)
+        self.assertEqual(0x000000, disp.COLOR_BLACK)
+        self.assertEqual(4, disp.MAX_COLOR)
+        self.assertEqual("end", disp.TOPIC_END)
+        self.assertEqual("search", disp.TOPIC_SEARCH_BASE)
+        self.assertEqual("error", disp.TOPIC_ERROR_BASE)
+        self.assertEqual(0, disp.NB_LEDS)
+        self.assertEqual(1, len(disp.displayed))
+        self.assertEqual({"1": []}, disp.displayed)
+
+    def test_init_arg_nb_leds(self):
+        import os
+        path_bckp = os.getcwd()
+        os.chdir("./Tests")
+        nb = 10
+        disp = displayer(nb_leds=nb)
+        os.chdir(path_bckp)
+        self.assertEqual(nb, disp.NB_LEDS)
+
+    def test_init_arg_components_file(self):
+        disp = displayer(components_file=self.COMPONENTS_ONE)
+        self.assertEqual(1, len(disp.displayed))
+        self.assertEqual({self.COMPONENT_ONE_ID: []}, disp.displayed)
+
     def test_explode_topic_base_without_info(self):
         disp = displayer(nb_leds=10, components_file=self.COMPONENTS_ONE)
         etopic = disp.explode_topic("end")
