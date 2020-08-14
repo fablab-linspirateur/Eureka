@@ -1,16 +1,15 @@
 class displayer():
     # displayer class manage calculation of display of information
 
-    def __init__(self, components_file="components.txt"):
+    def __init__(self, nb_leds=0, components_file="components.txt"):
         # initialize constants and leds + retrieve file infos and initialize mqtt
         self.LED_OFF = (0, 0, 0)
-        self.LED_GREEN = (0, 100, 0)
-        self.LED_RED = (100, 0, 0)
         self.COLOR_BLACK = 0x000000
         self.MAX_COLOR = 4
         self.TOPIC_END = "end"
         self.TOPIC_SEARCH_BASE = "search"
         self.TOPIC_ERROR_BASE = "error"
+        self.NB_LEDS = nb_leds
         self.displayed = {}
         for component in self.get_components(components_file):
             self.displayed[component] = []
@@ -94,6 +93,13 @@ class displayer():
         # turn off all LEDs that have been turned on for a specific color
         for component in self.displayed:
             self.remove(self.displayed[component], color)
+
+    def all(self, color=0x000000):
+        # turn all LEDs to the color
+        result = []
+        for i in range(self.NB_LEDS):
+            result.append(self.to_color(color))
+        return result
 
     def display_error(self, message, color):
         # display an error
