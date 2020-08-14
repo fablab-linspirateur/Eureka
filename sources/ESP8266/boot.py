@@ -1,7 +1,6 @@
 import machine
 import neopixel
 import utime
-import network
 from umqtt.robust import MQTTClient
 import displayer
 
@@ -50,12 +49,14 @@ def get_config(config_file="config.yaml"):
     return config
 
 
-def connection(sta_if, network, password):
+def do_connect(network, password):
     # connect to Wifi
-    sta_if.active(True)
+    import network
+    wlan = network.WLAN(network.STA_IF)
+    wlan.active(True)
     while 1:
         print("scan Wlan...")
-        _reseaux = sta_if.scan()
+        _reseaux = wlan.scan()
         utime.sleep_ms(2000)
         print("found: %s" % _reseaux)
         trouve = False
@@ -68,12 +69,12 @@ def connection(sta_if, network, password):
                 print("!! No RPi !!")
         if trouve:
             print("connec to", network)
-            while not sta_if.isconnected():
-                sta_if.connect(network, password)
+            while not wlan.isconnected():
+                wlan.connect(network, password)
                 utime.sleep_ms(1000)
                 infoleds()
                 print(".")
-            print("ready: ", sta_if.ifconfig())
+            print("ready: ", wlan.ifconfig())
             break
 
 
@@ -84,11 +85,12 @@ NB_LEDS = 150
 leds = neopixel.NeoPixel(machine.Pin(2), NB_LEDS)
 disp = displayer(nb_leds=NB_LEDS)
 neo_write(disp.all(0x640000))
+utime.sleep_ms(1000)
 
 # define wifi configuration
-sta_if = network.WLAN(network.STA_IF)
-connection(sta_if, config["network"], config["password"])
+do_connect(config["network"], config["password"])
 neo_write(disp.all(0x640000))
+utime.sleep_ms(1000)
 
 # define MQTT configuration
 client = init_mqtt(configuration["name"], configuration["broker"])
