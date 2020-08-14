@@ -14,8 +14,8 @@ def init_mqtt(name, broker):
     res = client.connect()
     if not res:
         client.subscribe(disp.TOPIC_END)
-        client.subscribe(disp.TOPIC_SEARCH_BASE+"/*")
-        client.subscribe(disp.TOPIC_ERROR_BASE+"/*")
+        client.subscribe(disp.TOPIC_SEARCH_BASE+"/#")
+        client.subscribe(disp.TOPIC_ERROR_BASE+"/#")
         client.set_callback(sub_cb)
         return client
     return None
@@ -23,7 +23,9 @@ def init_mqtt(name, broker):
 
 def sub_cb(topic, payload):
     # mqtt callback
-    disp.refresh(topic, payload)
+    led_colors = disp.refresh(topic, payload)
+    for i, color in enumerate(led_colors):
+        leds[i] = color
     utime.sleep_ms(100)
     leds.write()
 
@@ -71,11 +73,11 @@ def connection(sta_if, network, password):
 
 
 configuration = get_config()
-disp = displayer()
 
 # define leds configuration
 NB_LEDS = 150
 leds = neopixel.NeoPixel(machine.Pin(2), NB_LEDS)
+disp = displayer(nb_leds=NB_LEDS)
 
 # define wifi configuration
 sta_if = network.WLAN(network.STA_IF)
