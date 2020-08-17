@@ -3,7 +3,7 @@ from sources.ESP8266.displayer import displayer
 
 
 class displayer_test(unittest.TestCase):
-    """Test case utilisé pour tester les fonctions des fonctions du fichier boot ESP8266."""
+    """Test case utilisé pour tester les fonctions de la classe displayer."""
 
     def setUp(self):
         self.COMPONENTS_EMPTY = "./Tests/components_empty.txt"
@@ -12,12 +12,6 @@ class displayer_test(unittest.TestCase):
         self.COMPONENTS_FIFTEEN = "./Tests/components_fifteen.txt"
         self.COMPONENT_ONE_ID = "123"
         self.COMPONENT_TWO_ID = "456"
-
-    def test_explode_topic_base_and_info(self):
-        disp = displayer(nb_leds=10, components_file=self.COMPONENTS_ONE)
-        etopic = disp.explode_topic("search/1")
-        self.assertEqual(etopic["base"], "search")
-        self.assertEqual(etopic["info"], "1")
 
     def test_init_no_arg(self):
         import os
@@ -49,37 +43,43 @@ class displayer_test(unittest.TestCase):
         self.assertEqual(1, len(disp.displayed))
         self.assertEqual({self.COMPONENT_ONE_ID: []}, disp.displayed)
 
+    def test_explode_topic_base_and_info(self):
+        disp = displayer(nb_leds=10, components_file=self.COMPONENTS_ONE)
+        etopic = disp.explode_topic("search/1")
+        self.assertEqual("search", etopic["base"])
+        self.assertEqual("1", etopic["info"])
+
     def test_explode_topic_base_without_info(self):
         disp = displayer(nb_leds=10, components_file=self.COMPONENTS_ONE)
         etopic = disp.explode_topic("end")
-        self.assertEqual(etopic["base"], "end")
-        self.assertEqual(etopic["info"], "")
+        self.assertEqual("end", etopic["base"])
+        self.assertEqual("", etopic["info"])
 
     def test_explode_topic_base_with_complex_info(self):
         disp = displayer(nb_leds=10, components_file=self.COMPONENTS_ONE)
         etopic = disp.explode_topic("search/1/2")
-        self.assertEqual(etopic["base"], "search")
-        self.assertEqual(etopic["info"], "1/2")
+        self.assertEqual("search", etopic["base"])
+        self.assertEqual("1/2", etopic["info"])
 
     def test_to_color_off(self):
         disp = displayer(nb_leds=10, components_file=self.COMPONENTS_ONE)
         color = disp.to_color(0x000000)
-        self.assertEqual(color, (0, 0, 0))
+        self.assertEqual((0, 0, 0), color)
 
     def test_to_color_white_half(self):
         disp = displayer(nb_leds=10, components_file=self.COMPONENTS_ONE)
         color = disp.to_color(0x7f7f7f)
-        self.assertEqual(color, (127, 127, 127))
+        self.assertEqual((127, 127, 127), color)
 
     def test_to_color_red_full(self):
         disp = displayer(nb_leds=10, components_file=self.COMPONENTS_ONE)
         color = disp.to_color(0xff0000)
-        self.assertEqual(color, (255, 0, 0))
+        self.assertEqual((255, 0, 0), color)
 
     def test_to_color_green_hundred(self):
         disp = displayer(nb_leds=10, components_file=self.COMPONENTS_ONE)
         color = disp.to_color(0x006400)
-        self.assertEqual(color, (0, 100, 0))
+        self.assertEqual((0, 100, 0), color)
 
     def test_get_components_file_empty(self):
         disp = displayer(nb_leds=0, components_file=self.COMPONENTS_EMPTY)
@@ -87,7 +87,7 @@ class displayer_test(unittest.TestCase):
 
     def test_get_components_file_one(self):
         disp = displayer(nb_leds=10, components_file=self.COMPONENTS_ONE)
-        self.assertEqual(disp.displayed, {self.COMPONENT_ONE_ID: []})
+        self.assertEqual({self.COMPONENT_ONE_ID: []}, disp.displayed)
 
     def test_get_components_file_fifteen(self):
         disp = displayer(nb_leds=150, components_file=self.COMPONENTS_FIFTEEN)
@@ -108,7 +108,7 @@ class displayer_test(unittest.TestCase):
             "14": [],
             "15": []
         }
-        self.assertEqual(disp.displayed, result)
+        self.assertEqual(result, disp.displayed)
 
     def test_add_to_empty(self):
         disp = displayer(nb_leds=10, components_file=self.COMPONENTS_ONE)
