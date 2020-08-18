@@ -20,6 +20,3 @@ class finder():
 
     def search_components(self, compound):
         return list(self.compounds["component"][self.compounds["compound"] == compound])
-
-    def display_components(self, components, color):
-        return
