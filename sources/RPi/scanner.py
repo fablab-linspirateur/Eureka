@@ -1,24 +1,13 @@
 #!/usr/bin/python3
 
 import asyncio
-
 import evdev
 import paho.mqtt.client as mqtt
 from evdev import ecodes
 
-client = mqtt.Client()
-client.connect("localhost", 1883)
-FINDOF = "fin d'of"
-client.loop_start()
-
-def getDevice():
-    devices = [evdev.InputDevice(path) for path in evdev.list_devices()]
-    for d in devices:
-        print(d)
-        if "Scanner" in d.name:
-            yield d
-            print("found: {}".format(d))
-
+# constants
+TOPIC_END = "end"
+TOPIC_SEARCH_BASE = "search"
 scancodes = {
     # Scancode: ASCIICode
     0: None, 1: u'ESC', 2: u'1', 3: u'2', 4: u'3', 5: u'4', 6: u'5', 7: u'6', 8: u'7', 9: u'8',
@@ -29,30 +18,56 @@ scancodes = {
     50: u'm', 51: u',', 52: u'.', 53: u'/', 54: u'RSHFT', 56: u'LALT', 57: u' ', 100: u'RALT'
 }
 
+
+# connexion (async) to mqtt broker
+client = mqtt.Client()
+client.connect("localhost", 1883)
+client.loop_start()
+
+
+def getDevice():
+    # get the list of all scanning devices
+    devices = [evdev.InputDevice(path) for path in evdev.list_devices()]
+    for d in devices:
+        print(d)
+        if "Scanner" in d.name:
+            yield d
+            print("found: {}".format(d))
+
+
 async def publishScan(dev):
+    # read the value scanned by a device and publish a topic on mqtt broker
     scanvalue = ""
     async for ev in dev.async_read_loop():
         if ev.type == ecodes.EV_KEY:
-            #print(evdev.categorize(ev))
+            # print(evdev.categorize(ev))
             data = evdev.categorize(ev)
-            if data.keystate ==1 and data.scancode != 42 :
+            if data.keystate == 1 and data.scancode != 42:
                 if data.scancode == 28:
                     if scanvalue == "fin d4of":
-                        scanvalue = FINDOF
-                    client.publish(topic="scanner/scan/{}".format(dev), payload="{}".format(scanvalue), qos=0, retain=False)
+                        # TODO payload should be the color associated to the device, not the device itself
+                        client.publish(topic=TOPIC_END,
+                                       payload="{}".format(dev), qos=0, retain=False)
+                    else:
+                        # TODO payload should be the color associated to the device, not the device itself
+                        client.publish(topic=TOPIC_SEARCH_BASE + "/{}".format(scanvalue),
+                                       payload="{}".format(dev), qos=0, retain=False)
                     scanvalue = ""
                 else:
-                    #print(scancodes[data.scancode])
+                    # print(scancodes[data.scancode])
                     scanvalue = scanvalue+scancodes[data.scancode]
     print("fin du scan")
 
 loop = asyncio.get_event_loop()
 
 if __name__ == "__main__":
- 
+
+    # create async task for all scanner devices
     devices = getDevice()
-    for device in  devices:
+    for device in devices:
         asyncio.ensure_future(publishScan(device))
- 
+
+    # execute the callbacks forever
     loop.run_forever()
+
     client.loop_stop()
