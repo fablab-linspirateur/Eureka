@@ -50,13 +50,22 @@ async def publishScan(dev):
                                        payload="{}".format(dev), qos=0, retain=False)
                     else:
                         # TODO payload should be the color associated to the device, not the device itself
-                        client.publish(topic=TOPIC_SEARCH_BASE + "/{}".format(scanvalue),
+                        compound = read_compound(scanvalue)
+                        client.publish(topic=TOPIC_SEARCH_BASE + "/{}".format(compound),
                                        payload="{}".format(dev), qos=0, retain=False)
                     scanvalue = ""
                 else:
                     # print(scancodes[data.scancode])
                     scanvalue = scanvalue+scancodes[data.scancode]
     print("fin du scan")
+
+
+def read_compound(barcode):
+    if len(barcode) == 32:
+        return int(barcode[12:18])
+    else:
+        return None
+
 
 loop = asyncio.get_event_loop()
 
