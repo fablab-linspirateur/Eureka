@@ -1,7 +1,7 @@
 class displayer():
     # displayer class manage calculation of display of information
 
-    def __init__(self, nb_leds=0, components_file="components.txt"):
+    def __init__(self, nb_leds=0, components_file="components.txt", config_file="config.yaml"):
         # initialize constants and leds + retrieve file infos and initialize mqtt
         self.LED_OFF = (0, 0, 0)
         self.COLOR_BLACK = 0x000000
@@ -13,6 +13,7 @@ class displayer():
         self.displayed = {}
         for component in self.get_components(components_file):
             self.displayed[component] = []
+        self.config = self.get_config(config_file)
 
     def explode_topic(self, topic):
         # retrieve type + info contained in a topic
@@ -40,6 +41,20 @@ class displayer():
             if kv != "":
                 components.append(kv.strip())
         return components
+
+    def get_config(self, config_file="config.yaml"):
+        # get the configuration dictionary from yaml file
+        f = open(config_file)
+        content = f.read()
+        f.close()
+        choix = content.split("\n")
+        config = {}
+        for kv in choix:
+            if kv != '':
+                key, val = kv.split(":")
+                key = key.strip()
+                config[key] = val.strip()
+        return config
 
     def to_neopixel(self):
         result = []
@@ -103,7 +118,7 @@ class displayer():
 
     def display_error(self, message, color):
         # display an error
-        return null
+        return
 
 #    def info_leds(self):
         # make the first LED blink green

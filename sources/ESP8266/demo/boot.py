@@ -72,13 +72,10 @@ def do_connect(network, password):
             while not wlan.isconnected():
                 wlan.connect(network, password)
                 utime.sleep_ms(1000)
-                infoleds()
                 print(".")
             print("ready: ", wlan.ifconfig())
             break
 
-
-configuration = get_config()
 
 # define leds configuration
 NB_LEDS = 150
@@ -88,10 +85,10 @@ neo_write(disp.all(0x640000))
 utime.sleep_ms(1000)
 
 # define wifi configuration
-do_connect(config["network"], config["password"])
+do_connect(disp.config["network"], disp.config["password"])
 neo_write(disp.all(0x640000))
 utime.sleep_ms(1000)
 
 # define MQTT configuration
-client = init_mqtt(configuration["name"], configuration["broker"])
+client = init_mqtt(disp.config["name"], disp.config["broker"])
 neo_write(disp.all())
