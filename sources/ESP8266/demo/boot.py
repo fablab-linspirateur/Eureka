@@ -5,21 +5,6 @@ from umqtt.robust import MQTTClient
 import displayer
 
 
-def init_mqtt(name, broker):
-    # initialize mqtt subscriptions
-    print("connect mqtt...")
-    client = MQTTClient(
-        name, broker, port=1883)
-    res = client.connect()
-    if not res:
-        client.subscribe(disp.TOPIC_END)
-        client.subscribe(disp.TOPIC_SEARCH_BASE+"/#")
-        client.subscribe(disp.TOPIC_ERROR_BASE+"/#")
-        client.set_callback(sub_cb)
-        return client
-    return None
-
-
 def sub_cb(topic, payload):
     # mqtt callback
     led_colors = disp.refresh(topic, payload)
@@ -75,5 +60,6 @@ neo_write(disp.all(0x640000))
 utime.sleep_ms(1000)
 
 # define MQTT configuration
-client = init_mqtt(disp.config["name"], disp.config["broker"])
+disp.init_mqtt(MQTTClient(
+    disp.config["name"], disp.config["broker"], port=1883))
 neo_write(disp.all())

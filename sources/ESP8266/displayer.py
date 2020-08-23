@@ -15,6 +15,18 @@ class displayer():
             self.displayed[component] = []
         self.config = self.get_config(config_file)
 
+    def init_mqtt(self, client, sub_cb):
+        # initialize mqtt subscriptions
+        print("connect mqtt...")
+        res = client.connect()
+        if not res:
+            client.subscribe(self.TOPIC_END)
+            client.subscribe(self.TOPIC_SEARCH_BASE+"/#")
+            client.subscribe(self.TOPIC_ERROR_BASE+"/#")
+            client.set_callback(sub_cb)
+            return client
+        return None
+
     def explode_topic(self, topic):
         # retrieve type + info contained in a topic
         ttopic = topic.split(sep="/", maxsplit=1)

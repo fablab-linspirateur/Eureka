@@ -441,3 +441,19 @@ class displayer_test(unittest.TestCase):
                     (0, 100, 0), (0, 100, 0), (0, 100, 0), (0, 100, 0), (0, 100, 0)]
         result = disp.all(0x006400)
         self.assertEqual(expected, result)
+
+    def test_init_mqtt(self):
+        from Tests.umqtt_robust_MQTTClient_mock import MQTTClient
+
+        def tmp_cb():
+            return
+        disp = displayer(
+            nb_leds=20, components_file=self.COMPONENTS_ONE, config_file=self.CONFIG_TOTO)
+        client = disp.init_mqtt(MQTTClient(
+            disp.config["name"], disp.config["broker"], 1883), tmp_cb)
+        self.assertIsNotNone(client)
+        self.assertTrue(client.is_connected)
+        self.assertIn(disp.TOPIC_END, client.topics)
+        self.assertIn(disp.TOPIC_SEARCH_BASE+"/#", client.topics)
+        self.assertIn(disp.TOPIC_ERROR_BASE+"/#", client.topics)
+        self.assertEqual(tmp_cb, client.callback)
