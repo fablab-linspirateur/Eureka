@@ -1,7 +1,7 @@
 class displayer():
     # displayer class manage calculation of display of information
 
-    def __init__(self, nb_leds=0, components_file="components.txt", config_file="config.yaml"):
+    def __init__(self, sleep, leds, nb_leds=0, components_file="components.txt", config_file="config.yaml"):
         # initialize constants and leds + retrieve file infos and initialize mqtt
         self.LED_OFF = (0, 0, 0)
         self.COLOR_BLACK = 0x000000
@@ -11,11 +11,25 @@ class displayer():
         self.TOPIC_ERROR_BASE = "error"
         self.NB_LEDS = nb_leds
         self.displayed = {}
+        self.leds = leds
+        self.sleep = sleep
         for component in self.get_components(components_file):
             self.displayed[component] = []
         self.config = self.get_config(config_file)
 
-    def init_mqtt(self, client, sub_cb):
+    def sub_cb(self, topic, payload):
+        # mqtt callback
+        led_colors = self.refresh(topic, payload)
+        self.neo_write(led_colors)
+
+    def neo_write(self, t_color):
+        # write a table of colors to neopixel
+        for i, color in enumerate(t_color):
+            self.leds[i] = color
+        self.sleep(100)
+        self.leds.write()
+
+    def init_mqtt(self, client):
         # initialize mqtt subscriptions
         print("connect mqtt...")
         res = client.connect()
@@ -23,7 +37,7 @@ class displayer():
             client.subscribe(self.TOPIC_END)
             client.subscribe(self.TOPIC_SEARCH_BASE+"/#")
             client.subscribe(self.TOPIC_ERROR_BASE+"/#")
-            client.set_callback(sub_cb)
+            client.set_callback(self.sub_cb)
             return client
         return None
 
