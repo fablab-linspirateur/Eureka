@@ -17,11 +17,6 @@ class displayer():
             self.displayed[component] = []
         self.config = self.get_config(config_file)
 
-    def sub_cb(self, topic, payload):
-        # mqtt callback
-        led_colors = self.refresh(topic, payload)
-        self.neo_write(led_colors)
-
     def neo_write(self, t_color):
         # write a table of colors to neopixel
         for i, color in enumerate(t_color):
@@ -37,7 +32,7 @@ class displayer():
             client.subscribe(self.TOPIC_END)
             client.subscribe(self.TOPIC_SEARCH_BASE+"/#")
             client.subscribe(self.TOPIC_ERROR_BASE+"/#")
-            client.set_callback(self.sub_cb)
+            client.set_callback(self.refresh)
             return client
         return None
 
@@ -80,6 +75,8 @@ class displayer():
                 key, val = kv.split(":")
                 key = key.strip()
                 config[key] = val.strip()
+        if "port" in config:
+            config["port"] = int(config["port"])
         return config
 
     def to_neopixel(self):
@@ -106,7 +103,7 @@ class displayer():
             self.turn_off(int(payload))
         elif etopic["base"] == self.TOPIC_ERROR_BASE:
             self.display_error(etopic["info"], int(payload))
-        return self.to_neopixel()
+        self.neo_write(self.to_neopixel())
 
     def add(self, disp_comp, color):
         # add a color to a displayed component
@@ -140,7 +137,7 @@ class displayer():
         result = []
         for i in range(self.NB_LEDS):
             result.append(self.to_color(color))
-        return result
+        self.neo_write(result)
 
     def display_error(self, message, color):
         # display an error

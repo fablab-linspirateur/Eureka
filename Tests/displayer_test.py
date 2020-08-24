@@ -161,7 +161,7 @@ class displayer_test(unittest.TestCase):
             "network": "tata",
             "password": "titi",
             "name": "toto",
-            "broker": "tutu"
+            "broker": "tutu",
             "port": 42
         }
         self.assertEqual(result, disp.config)
@@ -353,19 +353,24 @@ class displayer_test(unittest.TestCase):
         self.assertEqual(expected, result)
 
     def test_refresh_end_one_component_one_color(self):
-        disp = displayer(self.sleep, None,
-                         nb_leds=10, components_file=self.COMPONENTS_ONE, config_file=self.CONFIG_TOTO)
+        from Tests.neopixel_Neopixel_mock import NeoPixel
+        nb = 10
+        disp = displayer(self.sleep, NeoPixel(2, nb),
+                         nb_leds=nb, components_file=self.COMPONENTS_ONE, config_file=self.CONFIG_TOTO)
         disp.display_component(self.COMPONENT_ONE_ID, 0x640000)
         result = disp.refresh(bytes(disp.TOPIC_END, "utf-8"),
                               bytes(str(0x640000), "utf-8"))
-        expected = [(0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0),
-                    (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0)]
+        expected = []
+        for i in range(nb):
+            expected.append((0, 0, 0))
         result = disp.to_neopixel()
         self.assertEqual(expected, result)
 
     def test_refresh_end_one_component_two_colors(self):
-        disp = displayer(self.sleep, None,
-                         nb_leds=10, components_file=self.COMPONENTS_ONE, config_file=self.CONFIG_TOTO)
+        from Tests.neopixel_Neopixel_mock import NeoPixel
+        nb = 10
+        disp = displayer(self.sleep, NeoPixel(2, nb),
+                         nb_leds=nb, components_file=self.COMPONENTS_ONE, config_file=self.CONFIG_TOTO)
         disp.display_component(self.COMPONENT_ONE_ID, 0x640000)
         disp.display_component(self.COMPONENT_ONE_ID, 0x006400)
         result = disp.refresh(bytes(disp.TOPIC_END, "utf-8"),
@@ -376,22 +381,25 @@ class displayer_test(unittest.TestCase):
         self.assertEqual(expected, result)
 
     def test_refresh_end_two_components_one_color(self):
-        disp = displayer(self.sleep, None,
-                         nb_leds=20, components_file=self.COMPONENTS_TWO, config_file=self.CONFIG_TOTO)
+        from Tests.neopixel_Neopixel_mock import NeoPixel
+        nb = 20
+        disp = displayer(self.sleep, NeoPixel(2, nb),
+                         nb_leds=nb, components_file=self.COMPONENTS_TWO, config_file=self.CONFIG_TOTO)
         disp.display_component(self.COMPONENT_ONE_ID, 0x640000)
         disp.display_component(self.COMPONENT_TWO_ID, 0x640000)
         result = disp.refresh(bytes(disp.TOPIC_END, "utf-8"),
                               bytes(str(0x640000), "utf-8"))
-        expected = [(0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0),
-                    (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0),
-                    (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0),
-                    (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0)]
+        expected = []
+        for i in range(nb):
+            expected.append((0, 0, 0))
         result = disp.to_neopixel()
         self.assertEqual(expected, result)
 
     def test_refresh_end_two_components_two_colors(self):
-        disp = displayer(self.sleep, None,
-                         nb_leds=20, components_file=self.COMPONENTS_TWO, config_file=self.CONFIG_TOTO)
+        from Tests.neopixel_Neopixel_mock import NeoPixel
+        nb = 20
+        disp = displayer(self.sleep, NeoPixel(2, nb),
+                         nb_leds=nb, components_file=self.COMPONENTS_TWO, config_file=self.CONFIG_TOTO)
         disp.display_component(self.COMPONENT_ONE_ID, 0x640000)
         disp.display_component(self.COMPONENT_ONE_ID, 0x006400)
         disp.display_component(self.COMPONENT_TWO_ID, 0x640000)
@@ -406,8 +414,10 @@ class displayer_test(unittest.TestCase):
         self.assertEqual(expected, result)
 
     def test_refresh_search_existing(self):
-        disp = displayer(self.sleep, None,
-                         nb_leds=10, components_file=self.COMPONENTS_ONE, config_file=self.CONFIG_TOTO)
+        from Tests.neopixel_Neopixel_mock import NeoPixel
+        nb = 10
+        disp = displayer(self.sleep, NeoPixel(2, nb),
+                         nb_leds=nb, components_file=self.COMPONENTS_ONE, config_file=self.CONFIG_TOTO)
         result = disp.refresh(bytes(disp.TOPIC_SEARCH_BASE + "/" + self.COMPONENT_ONE_ID, "utf-8"),
                               bytes(str(0x640000), "utf-8"))
         expected = [(0, 0, 0), (100, 0, 0), (100, 0, 0), (0, 0, 0), (0, 0, 0),
@@ -416,40 +426,50 @@ class displayer_test(unittest.TestCase):
         self.assertEqual(expected, result)
 
     def test_refresh_search_unexisting(self):
-        disp = displayer(self.sleep, None,
-                         nb_leds=10, components_file=self.COMPONENTS_ONE, config_file=self.CONFIG_TOTO)
+        from Tests.neopixel_Neopixel_mock import NeoPixel
+        nb = 10
+        disp = displayer(self.sleep, NeoPixel(2, nb),
+                         nb_leds=nb, components_file=self.COMPONENTS_ONE, config_file=self.CONFIG_TOTO)
         result = disp.refresh(bytes(disp.TOPIC_SEARCH_BASE + "/" + self.COMPONENT_TWO_ID, "utf-8"),
                               bytes(str(0x640000), "utf-8"))
-        expected = [(0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0),
-                    (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0)]
+        expected = []
+        for i in range(nb):
+            expected.append((0, 0, 0))
         result = disp.to_neopixel()
         self.assertEqual(expected, result)
 
     def test_all_no_param(self):
-        disp = displayer(self.sleep, None,
-                         nb_leds=10, components_file=self.COMPONENTS_ONE, config_file=self.CONFIG_TOTO)
-        expected = [(0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0),
-                    (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0)]
-        result = disp.all()
-        self.assertEqual(expected, result)
+        from Tests.neopixel_Neopixel_mock import NeoPixel
+        nb = 10
+        disp = displayer(self.sleep, NeoPixel(2, nb),
+                         nb_leds=nb, components_file=self.COMPONENTS_ONE, config_file=self.CONFIG_TOTO)
+        expected = []
+        for i in range(nb):
+            expected.append((0, 0, 0))
+        disp.all()
+        self.assertEqual(expected, disp.leds)
 
     def test_all_green_10_leds_1_component(self):
-        disp = displayer(self.sleep, None,
-                         nb_leds=10, components_file=self.COMPONENTS_ONE, config_file=self.CONFIG_TOTO)
-        expected = [(0, 100, 0), (0, 100, 0), (0, 100, 0), (0, 100, 0), (0, 100, 0),
-                    (0, 100, 0), (0, 100, 0), (0, 100, 0), (0, 100, 0), (0, 100, 0)]
-        result = disp.all(0x006400)
-        self.assertEqual(expected, result)
+        from Tests.neopixel_Neopixel_mock import NeoPixel
+        nb = 10
+        disp = displayer(self.sleep, NeoPixel(2, nb),
+                         nb_leds=nb, components_file=self.COMPONENTS_ONE, config_file=self.CONFIG_TOTO)
+        expected = []
+        for i in range(nb):
+            expected.append((0, 100, 0))
+        disp.all(0x006400)
+        self.assertEqual(expected, disp.leds)
 
     def test_all_green_20_leds_1_component(self):
-        disp = displayer(self.sleep, None,
-                         nb_leds=20, components_file=self.COMPONENTS_ONE, config_file=self.CONFIG_TOTO)
-        expected = [(0, 100, 0), (0, 100, 0), (0, 100, 0), (0, 100, 0), (0, 100, 0),
-                    (0, 100, 0), (0, 100, 0), (0, 100, 0), (0, 100, 0), (0, 100, 0),
-                    (0, 100, 0), (0, 100, 0), (0, 100, 0), (0, 100, 0), (0, 100, 0),
-                    (0, 100, 0), (0, 100, 0), (0, 100, 0), (0, 100, 0), (0, 100, 0)]
-        result = disp.all(0x006400)
-        self.assertEqual(expected, result)
+        from Tests.neopixel_Neopixel_mock import NeoPixel
+        nb = 20
+        disp = displayer(self.sleep, NeoPixel(2, nb),
+                         nb_leds=nb, components_file=self.COMPONENTS_ONE, config_file=self.CONFIG_TOTO)
+        expected = []
+        for i in range(nb):
+            expected.append((0, 100, 0))
+        disp.all(0x006400)
+        self.assertEqual(expected, disp.leds)
 
     def test_init_mqtt(self):
         from Tests.umqtt_robust_MQTTClient_mock import MQTTClient
@@ -462,7 +482,7 @@ class displayer_test(unittest.TestCase):
         self.assertIn(disp.TOPIC_END, client.topics)
         self.assertIn(disp.TOPIC_SEARCH_BASE+"/#", client.topics)
         self.assertIn(disp.TOPIC_ERROR_BASE+"/#", client.topics)
-        self.assertEqual(disp.sub_cb, client.callback)
+        self.assertEqual(disp.refresh, client.callback)
 
     def test_neo_write_empty(self):
         from Tests.neopixel_Neopixel_mock import NeoPixel

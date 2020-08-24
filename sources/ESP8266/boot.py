@@ -39,14 +39,14 @@ leds = NeoPixel(machine.Pin(2), NB_LEDS)
 disp = displayer(sleep_ms, leds, nb_leds=NB_LEDS)
 
 # display all red = waiting for wifi connection
-disp.neo_write(disp.all(0x640000))
+disp.all(0x640000)
 sleep_ms(1000)
 
 # define wifi configuration
 do_connect(disp.config["network"], disp.config["password"])
 
 # display all green = wifi connected
-disp.neo_write(disp.all(0x006400))
+disp.all(0x006400)
 sleep_ms(1000)
 
 # define MQTT configuration
@@ -54,4 +54,4 @@ disp.init_mqtt(MQTTClient(
     disp.config["name"], disp.config["broker"], port=disp.config["port"]))
 
 # turn all off
-disp.neo_write(disp.all())
+disp.all()
