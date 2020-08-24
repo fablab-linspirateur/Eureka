@@ -38,7 +38,8 @@ class displayer_test(unittest.TestCase):
             "network": "demo-network",
             "password": "demo-password",
             "name": "demo-name",
-            "broker": "demo-broker"
+            "broker": "demo-broker",
+            "port": 42
         }
         self.assertEqual(res_config, disp.config)
         self.assertIsNone(disp.leds)
@@ -66,7 +67,8 @@ class displayer_test(unittest.TestCase):
             "network": "tata",
             "password": "titi",
             "name": "toto",
-            "broker": "tutu"
+            "broker": "tutu",
+            "port": 42
         }
         self.assertEqual(result, disp.config)
 
@@ -160,6 +162,7 @@ class displayer_test(unittest.TestCase):
             "password": "titi",
             "name": "toto",
             "broker": "tutu"
+            "port": 42
         }
         self.assertEqual(result, disp.config)
 
@@ -453,7 +456,7 @@ class displayer_test(unittest.TestCase):
         disp = displayer(self.sleep, None,
                          nb_leds=20, components_file=self.COMPONENTS_ONE, config_file=self.CONFIG_TOTO)
         client = disp.init_mqtt(MQTTClient(
-            disp.config["name"], disp.config["broker"], 1883))
+            disp.config["name"], disp.config["broker"], disp.config["port"]))
         self.assertIsNotNone(client)
         self.assertTrue(client.is_connected)
         self.assertIn(disp.TOPIC_END, client.topics)

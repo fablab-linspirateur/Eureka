@@ -1,5 +1,5 @@
 import machine
-import neopixel
+from neopixel import NeoPixel
 from utime import sleep_ms
 from umqtt.robust import MQTTClient
 import displayer
@@ -24,7 +24,7 @@ def do_connect(network, password):
             else:
                 print("!! No RPi !!")
         if trouve:
-            print("connec to", network)
+            print("connected to", network)
             while not wlan.isconnected():
                 wlan.connect(network, password)
                 sleep_ms(1000)
@@ -35,7 +35,7 @@ def do_connect(network, password):
 
 # define leds configuration
 NB_LEDS = 150
-leds = neopixel.NeoPixel(machine.Pin(2), NB_LEDS)
+leds = NeoPixel(machine.Pin(2), NB_LEDS)
 disp = displayer(sleep_ms, leds, nb_leds=NB_LEDS)
 
 # display all red = waiting for wifi connection
@@ -51,7 +51,7 @@ sleep_ms(1000)
 
 # define MQTT configuration
 disp.init_mqtt(MQTTClient(
-    disp.config["name"], disp.config["broker"], port=1883))
+    disp.config["name"], disp.config["broker"], port=disp.config["port"]))
 
 # turn all off
 disp.neo_write(disp.all())

@@ -2,3 +2,4 @@ network: demo-network
 password: demo-password
 name: demo-name
 broker: demo-broker
+port: 42
