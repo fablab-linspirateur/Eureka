@@ -28,14 +28,10 @@ class displayer():
 
     def init_mqtt(self, client):
         # initialize mqtt subscriptions
-        res = client.connect()
-        if not res:
-            client.set_callback(self.refresh)
-            client.subscribe(self.TOPIC_END)
-            client.subscribe(self.TOPIC_SEARCH_BASE+"/#")
-            client.subscribe(self.TOPIC_ERROR_BASE+"/#")
-            return client
-        return None
+        client.set_callback(self.refresh)
+        client.subscribe(self.TOPIC_END)
+        client.subscribe(self.TOPIC_SEARCH_BASE+"/#")
+        client.subscribe(self.TOPIC_ERROR_BASE+"/#")
 
     def explode_topic(self, topic):
         # retrieve type + info contained in a topic
