@@ -37,7 +37,7 @@ class displayer():
 
     def explode_topic(self, topic):
         # retrieve type + info contained in a topic
-        ttopic = topic.split(sep="/", maxsplit=1)
+        ttopic = topic.split("/", 1)
         if len(ttopic) == 1:
             return {"base": ttopic[0], "info": ""}
         else:
