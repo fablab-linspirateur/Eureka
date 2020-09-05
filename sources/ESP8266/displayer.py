@@ -28,10 +28,10 @@ class displayer():
         # initialize mqtt subscriptions
         res = client.connect()
         if not res:
+            client.set_callback(self.refresh)
             client.subscribe(self.TOPIC_END)
             client.subscribe(self.TOPIC_SEARCH_BASE+"/#")
             client.subscribe(self.TOPIC_ERROR_BASE+"/#")
-            client.set_callback(self.refresh)
             return client
         return None
 
