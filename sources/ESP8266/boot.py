@@ -2,7 +2,7 @@ import machine
 from neopixel import NeoPixel
 from utime import sleep_ms
 from umqtt.robust import MQTTClient
-import displayer
+from displayer import displayer
 
 
 def do_connect(network, password):
