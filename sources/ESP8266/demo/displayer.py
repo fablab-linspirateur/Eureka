@@ -11,9 +11,11 @@ class displayer():
         self.TOPIC_ERROR_BASE = "error"
         self.NB_LEDS = nb_leds
         self.displayed = {}
+        self.components = []
         self.leds = leds
         self.sleep = sleep
-        for component in self.get_components(components_file):
+        self.components = self.get_components(components_file)
+        for component in self.components:
             self.displayed[component] = []
         self.config = self.get_config(config_file)
 
@@ -26,19 +28,18 @@ class displayer():
 
     def init_mqtt(self, client):
         # initialize mqtt subscriptions
-        print("connect mqtt...")
         res = client.connect()
         if not res:
+            client.set_callback(self.refresh)
             client.subscribe(self.TOPIC_END)
             client.subscribe(self.TOPIC_SEARCH_BASE+"/#")
             client.subscribe(self.TOPIC_ERROR_BASE+"/#")
-            client.set_callback(self.refresh)
             return client
         return None
 
     def explode_topic(self, topic):
         # retrieve type + info contained in a topic
-        ttopic = topic.split(sep="/", maxsplit=1)
+        ttopic = topic.split("/", 1)
         if len(ttopic) == 1:
             return {"base": ttopic[0], "info": ""}
         else:
@@ -81,7 +82,7 @@ class displayer():
 
     def to_neopixel(self):
         result = []
-        for component in self.displayed:
+        for component in self.components:
             result.append(self.LED_OFF)
             nb = 8
             for color in self.displayed[component]:
