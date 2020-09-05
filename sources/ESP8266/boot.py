@@ -25,7 +25,7 @@ def do_connect(idnet, password):
             print("connecting to", idnet)
             while not wlan.isconnected():
                 wlan.connect(idnet, password)
-                sleep_ms(1000)
+                sleep_ms(5000)
                 print(".")
             print("ready", wlan.ifconfig())
             break
