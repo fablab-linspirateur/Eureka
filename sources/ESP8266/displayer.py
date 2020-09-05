@@ -26,7 +26,6 @@ class displayer():
 
     def init_mqtt(self, client):
         # initialize mqtt subscriptions
-        print("connect mqtt...")
         res = client.connect()
         if not res:
             client.subscribe(self.TOPIC_END)
