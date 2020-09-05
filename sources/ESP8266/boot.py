@@ -30,7 +30,7 @@ def do_connect(idnet, password):
             print("ready", wlan.ifconfig())
             break
         else:
-            print("!! No RPi !!")
+            print("!! unexisting network !!")
 
 
 # define leds configuration
