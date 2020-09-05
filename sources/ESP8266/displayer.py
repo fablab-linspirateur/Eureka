@@ -11,9 +11,11 @@ class displayer():
         self.TOPIC_ERROR_BASE = "error"
         self.NB_LEDS = nb_leds
         self.displayed = {}
+        self.components = []
         self.leds = leds
         self.sleep = sleep
-        for component in self.get_components(components_file):
+        self.components = self.get_components(components_file)
+        for component in self.components:
             self.displayed[component] = []
         self.config = self.get_config(config_file)
 
@@ -80,7 +82,7 @@ class displayer():
 
     def to_neopixel(self):
         result = []
-        for component in self.displayed:
+        for component in self.components:
             result.append(self.LED_OFF)
             nb = 8
             for color in self.displayed[component]:
