@@ -5,7 +5,7 @@ from umqtt.robust import MQTTClient
 from displayer import displayer
 
 
-def do_connect(network, password):
+def do_connect(idnet, password):
     # connect to Wifi
     import network
     wlan = network.WLAN(network.STA_IF)
@@ -17,16 +17,16 @@ def do_connect(network, password):
         print("found: %s" % _reseaux)
         trouve = False
         for n in _reseaux:
-            if network in n[0]:
+            if idnet in n[0]:
                 print("network found")
                 trouve = True
                 break
             else:
                 print("!! No RPi !!")
         if trouve:
-            print("connected to", network)
+            print("connected to", idnet)
             while not wlan.isconnected():
-                wlan.connect(network, password)
+                wlan.connect(idnet, password)
                 sleep_ms(1000)
                 print(".")
             print("ready: ", wlan.ifconfig())
