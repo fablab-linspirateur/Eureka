@@ -45,14 +45,18 @@ sleep_ms(1000)
 # define wifi configuration
 do_connect(disp.config["network"], disp.config["password"])
 
-# display all green = wifi connected
-disp.all(0x006400)
+# display all blue = wifi connected
+disp.all(0x000064)
 sleep_ms(1000)
 
 # define MQTT configuration
 client = MQTTClient(disp.config["name"],
                     disp.config["broker"], port=disp.config["port"])
 disp.init_mqtt(client)
+
+# display all green = ready
+disp.all(0x006400)
+sleep_ms(1000)
 
 # turn all off
 disp.all()
