@@ -11,26 +11,26 @@ def do_connect(idnet, password):
     wlan = network.WLAN(network.STA_IF)
     wlan.active(True)
     while 1:
-        print("scan Wlan...")
+        print("scanning wifi")
         _reseaux = wlan.scan()
         sleep_ms(2000)
         print("found: %s" % _reseaux)
         trouve = False
         for n in _reseaux:
             if idnet in n[0]:
-                print("network found")
+                print("network", idnet, "found")
                 trouve = True
                 break
-            else:
-                print("!! No RPi !!")
         if trouve:
-            print("connected to", idnet)
+            print("connecting to", idnet)
             while not wlan.isconnected():
                 wlan.connect(idnet, password)
                 sleep_ms(1000)
                 print(".")
-            print("ready: ", wlan.ifconfig())
+            print("ready", wlan.ifconfig())
             break
+        else:
+            print("!! No RPi !!")
 
 
 # define leds configuration
