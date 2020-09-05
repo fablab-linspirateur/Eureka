@@ -358,8 +358,8 @@ class displayer_test(unittest.TestCase):
         disp = displayer(self.sleep, NeoPixel(2, nb),
                          nb_leds=nb, components_file=self.COMPONENTS_ONE, config_file=self.CONFIG_TOTO)
         disp.display_component(self.COMPONENT_ONE_ID, 0x640000)
-        result = disp.refresh(bytes(disp.TOPIC_END, "utf-8"),
-                              bytes(str(0x640000), "utf-8"))
+        disp.refresh(bytes(disp.TOPIC_END, "utf-8"),
+                     bytes(str(0x640000), "utf-8"))
         expected = []
         for i in range(nb):
             expected.append((0, 0, 0))
@@ -373,8 +373,8 @@ class displayer_test(unittest.TestCase):
                          nb_leds=nb, components_file=self.COMPONENTS_ONE, config_file=self.CONFIG_TOTO)
         disp.display_component(self.COMPONENT_ONE_ID, 0x640000)
         disp.display_component(self.COMPONENT_ONE_ID, 0x006400)
-        result = disp.refresh(bytes(disp.TOPIC_END, "utf-8"),
-                              bytes(str(0x640000), "utf-8"))
+        disp.refresh(bytes(disp.TOPIC_END, "utf-8"),
+                     bytes(str(0x640000), "utf-8"))
         expected = [(0, 0, 0), (0, 100, 0), (0, 100, 0), (0, 0, 0), (0, 0, 0),
                     (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0)]
         result = disp.to_neopixel()
@@ -387,8 +387,8 @@ class displayer_test(unittest.TestCase):
                          nb_leds=nb, components_file=self.COMPONENTS_TWO, config_file=self.CONFIG_TOTO)
         disp.display_component(self.COMPONENT_ONE_ID, 0x640000)
         disp.display_component(self.COMPONENT_TWO_ID, 0x640000)
-        result = disp.refresh(bytes(disp.TOPIC_END, "utf-8"),
-                              bytes(str(0x640000), "utf-8"))
+        disp.refresh(bytes(disp.TOPIC_END, "utf-8"),
+                     bytes(str(0x640000), "utf-8"))
         expected = []
         for i in range(nb):
             expected.append((0, 0, 0))
@@ -404,8 +404,8 @@ class displayer_test(unittest.TestCase):
         disp.display_component(self.COMPONENT_ONE_ID, 0x006400)
         disp.display_component(self.COMPONENT_TWO_ID, 0x640000)
         disp.display_component(self.COMPONENT_TWO_ID, 0x000064)
-        result = disp.refresh(bytes(disp.TOPIC_END, "utf-8"),
-                              bytes(str(0x640000), "utf-8"))
+        disp.refresh(bytes(disp.TOPIC_END, "utf-8"),
+                     bytes(str(0x640000), "utf-8"))
         expected = [(0, 0, 0), (0, 100, 0), (0, 100, 0), (0, 0, 0), (0, 0, 0),
                     (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0),
                     (0, 0, 0), (0, 0, 100), (0, 0, 100), (0, 0, 0), (0, 0, 0),
@@ -418,8 +418,8 @@ class displayer_test(unittest.TestCase):
         nb = 10
         disp = displayer(self.sleep, NeoPixel(2, nb),
                          nb_leds=nb, components_file=self.COMPONENTS_ONE, config_file=self.CONFIG_TOTO)
-        result = disp.refresh(bytes(disp.TOPIC_SEARCH_BASE + "/" + self.COMPONENT_ONE_ID, "utf-8"),
-                              bytes(str(0x640000), "utf-8"))
+        disp.refresh(bytes(disp.TOPIC_SEARCH_BASE + "/" + self.COMPONENT_ONE_ID, "utf-8"),
+                     bytes(str(0x640000), "utf-8"))
         expected = [(0, 0, 0), (100, 0, 0), (100, 0, 0), (0, 0, 0), (0, 0, 0),
                     (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0)]
         result = disp.to_neopixel()
@@ -430,8 +430,8 @@ class displayer_test(unittest.TestCase):
         nb = 10
         disp = displayer(self.sleep, NeoPixel(2, nb),
                          nb_leds=nb, components_file=self.COMPONENTS_ONE, config_file=self.CONFIG_TOTO)
-        result = disp.refresh(bytes(disp.TOPIC_SEARCH_BASE + "/" + self.COMPONENT_TWO_ID, "utf-8"),
-                              bytes(str(0x640000), "utf-8"))
+        disp.refresh(bytes(disp.TOPIC_SEARCH_BASE + "/" + self.COMPONENT_TWO_ID, "utf-8"),
+                     bytes(str(0x640000), "utf-8"))
         expected = []
         for i in range(nb):
             expected.append((0, 0, 0))
@@ -475,10 +475,9 @@ class displayer_test(unittest.TestCase):
         from Tests.umqtt_robust_MQTTClient_mock import MQTTClient
         disp = displayer(self.sleep, None,
                          nb_leds=20, components_file=self.COMPONENTS_ONE, config_file=self.CONFIG_TOTO)
-        client = disp.init_mqtt(MQTTClient(
-            disp.config["name"], disp.config["broker"], disp.config["port"]))
-        self.assertIsNotNone(client)
-        self.assertTrue(client.is_connected)
+        client = MQTTClient(
+            disp.config["name"], disp.config["broker"], disp.config["port"])
+        disp.init_mqtt(client)
         self.assertIn(disp.TOPIC_END, client.topics)
         self.assertIn(disp.TOPIC_SEARCH_BASE+"/#", client.topics)
         self.assertIn(disp.TOPIC_ERROR_BASE+"/#", client.topics)
