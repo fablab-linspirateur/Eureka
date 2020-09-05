@@ -50,8 +50,9 @@ disp.all(0x006400)
 sleep_ms(1000)
 
 # define MQTT configuration
-disp.init_mqtt(MQTTClient(
-    disp.config["name"], disp.config["broker"], port=disp.config["port"]))
+client = MQTTClient(disp.config["name"],
+                    disp.config["broker"], port=disp.config["port"])
+disp.init_mqtt(client)
 
 # turn all off
 disp.all()
