@@ -12,6 +12,7 @@ class displayer_test(unittest.TestCase):
         self.COMPONENTS_FIFTEEN = "./Tests/components_fifteen.txt"
         self.COMPONENT_ONE_ID = "123"
         self.COMPONENT_TWO_ID = "456"
+
         def sleep(param):
             return
         self.sleep = sleep
@@ -276,8 +277,8 @@ class displayer_test(unittest.TestCase):
         disp = displayer(self.sleep, None,
                          nb_leds=10, components_file=self.COMPONENTS_ONE)
         disp.display_component(self.COMPONENT_ONE_ID, 0x640000)
-        expected = [(0, 0, 0), (100, 0, 0), (100, 0, 0), (0, 0, 0), (0, 0, 0),
-                    (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0)]
+        expected = [(0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0), (100, 0, 0),
+                    (100, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0)]
         result = disp.to_neopixel()
         self.assertEqual(expected, result)
 
@@ -286,8 +287,8 @@ class displayer_test(unittest.TestCase):
                          nb_leds=10, components_file=self.COMPONENTS_ONE)
         disp.display_component(self.COMPONENT_ONE_ID, 0x640000)
         disp.display_component(self.COMPONENT_ONE_ID, 0x006400)
-        expected = [(0, 0, 0), (100, 0, 0), (100, 0, 0), (0, 100, 0), (0, 100, 0),
-                    (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0)]
+        expected = [(0, 0, 0), (0, 0, 0), (0, 0, 0), (100, 0, 0), (100, 0, 0),
+                    (0, 100, 0), (0, 100, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0)]
         result = disp.to_neopixel()
         self.assertEqual(expected, result)
 
@@ -297,8 +298,8 @@ class displayer_test(unittest.TestCase):
         disp.display_component(self.COMPONENT_ONE_ID, 0x640000)
         disp.display_component(self.COMPONENT_ONE_ID, 0x006400)
         disp.display_component(self.COMPONENT_ONE_ID, 0x000064)
-        expected = [(0, 0, 0), (100, 0, 0), (100, 0, 0), (0, 100, 0), (0, 100, 0),
-                    (0, 0, 100), (0, 0, 100), (0, 0, 0), (0, 0, 0), (0, 0, 0)]
+        expected = [(0, 0, 0), (0, 0, 0), (100, 0, 0), (100, 0, 0), (0, 100, 0),
+                    (0, 100, 0), (0, 0, 100), (0, 0, 100), (0, 0, 0), (0, 0, 0)]
         result = disp.to_neopixel()
         self.assertEqual(expected, result)
 
@@ -347,8 +348,8 @@ class displayer_test(unittest.TestCase):
         disp.display_component(self.COMPONENT_ONE_ID, 0x006400)
         disp.refresh(bytes(disp.TOPIC_END, "utf-8"),
                      bytes(str(0x640000), "utf-8"))
-        expected = [(0, 0, 0), (0, 100, 0), (0, 100, 0), (0, 0, 0), (0, 0, 0),
-                    (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0)]
+        expected = [(0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 100, 0),
+                    (0, 100, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0)]
         result = disp.to_neopixel()
         self.assertEqual(expected, result)
 
@@ -378,10 +379,10 @@ class displayer_test(unittest.TestCase):
         disp.display_component(self.COMPONENT_TWO_ID, 0x000064)
         disp.refresh(bytes(disp.TOPIC_END, "utf-8"),
                      bytes(str(0x640000), "utf-8"))
-        expected = [(0, 0, 0), (0, 100, 0), (0, 100, 0), (0, 0, 0), (0, 0, 0),
-                    (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0),
-                    (0, 0, 0), (0, 0, 100), (0, 0, 100), (0, 0, 0), (0, 0, 0),
-                    (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0)]
+        expected = [(0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 100, 0),
+                    (0, 100, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0),
+                    (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 100),
+                    (0, 0, 100), (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0)]
         result = disp.to_neopixel()
         self.assertEqual(expected, result)
 

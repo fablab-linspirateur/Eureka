@@ -63,16 +63,12 @@ class displayer():
     def to_neopixel(self):
         result = []
         for component in self.components:
-            result.append(self.LED_OFF)
-            nb = 8
+            blacks = [self.LED_OFF]*(5 - len(self.displayed[component]))
+            result += blacks
             for color in self.displayed[component]:
                 neocolor = self.to_color(color)
-                result.append(neocolor)
-                result.append(neocolor)
-                nb = nb - 2
-            for i in range(nb):
-                result.append(self.LED_OFF)
-            result.append(self.LED_OFF)
+                result += [neocolor]*2
+            result += blacks
         return result
 
     def refresh(self, topic, payload):
