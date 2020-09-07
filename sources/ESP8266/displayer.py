@@ -1,7 +1,7 @@
 class displayer():
     # displayer class manage calculation of display of information
 
-    def __init__(self, sleep, leds, nb_leds=0, components_file="components.txt", config_file="config.yaml"):
+    def __init__(self, sleep, leds, nb_leds=0, components_file="components.txt", config={}):
         # initialize constants and leds + retrieve file infos and initialize mqtt
         self.LED_OFF = (0, 0, 0)
         self.COLOR_BLACK = 0x000000
@@ -17,7 +17,7 @@ class displayer():
         self.components = self.get_components(components_file)
         for component in self.components:
             self.displayed[component] = []
-        self.config = self.get_config(config_file)
+        self.config = config
 
     def neo_write(self, t_color):
         # write a table of colors to neopixel
@@ -59,22 +59,6 @@ class displayer():
             if kv != "":
                 components.append(kv.strip())
         return components
-
-    def get_config(self, config_file="config.yaml"):
-        # get the configuration dictionary from yaml file
-        f = open(config_file)
-        content = f.read()
-        f.close()
-        choix = content.split("\n")
-        config = {}
-        for kv in choix:
-            if kv != '':
-                key, val = kv.split(":")
-                key = key.strip()
-                config[key] = val.strip()
-        if "port" in config:
-            config["port"] = int(config["port"])
-        return config
 
     def to_neopixel(self):
         result = []
@@ -139,14 +123,3 @@ class displayer():
     def display_error(self, message, color):
         # display an error
         return
-
-#    def info_leds(self):
-        # make the first LED blink green
-        # TODO move calls to self.leds in boot.py, just keep calculation of color display here
-        # utime.sleep_ms(500)
-        #self.leds[0] = self.LED_GREEN
-        # self.leds.write()
-        # print(".")
-        # utime.sleep_ms(500)
-        #self.leds[0] = self.LED_OFF
-        # self.leds.write()
