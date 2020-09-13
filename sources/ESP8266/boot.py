@@ -1,76 +1,45 @@
+from configuration import get_config
+from leds import init_component_leds, init_nb_leds, turn_all, flash, to_color, neo_write
+from network_cnx import do_connect, wlan_init
+from mqtt_cnx import init_mqtt
 import network
-import machine
-from neopixel import NeoPixel
 from utime import sleep_ms
 from umqtt.robust import MQTTClient
-from displayer import displayer
 
-
-def wlan_init(idnet):
-    # initialize wlan
-    wlan = network.WLAN(network.STA_IF)
-    wlan.active(True)
-    print("scanning wifi")
-    _reseaux = wlan.scan()
-    sleep_ms(2000)
-    print("found: %s" % _reseaux)
-    for n in _reseaux:
-        if idnet in n[0]:
-            print("network", idnet, "found")
-            return wlan
-    return None
-
-
-def do_connect(wlan, idnet, password):
-    # connect to Wifi
-    print("connecting to", idnet)
-    wlan.connect(idnet, password)
-    sleep_ms(5000)
-
-
-# define leds configuration
+# define configuration
 NB_LEDS = 150
-leds = NeoPixel(machine.Pin(2), NB_LEDS)
-disp = displayer(sleep_ms, leds, nb_leds=NB_LEDS)
+init_nb_leds(NB_LEDS)
+config = get_config()
+client = MQTTClient(config["name"], config["broker"], port=config["port"])
 
 # display all red = waiting for wifi connection
 color = 0x640000
-disp.all(color)
-sleep_ms(1000)
-disp.all()
+flash(color, sleep_ms)
 
 # define wifi configuration
 i = 1
 wlan = None
 while True:
-    print([disp.to_color(color)]*i)
-    disp.neo_write([disp.to_color(color)]*i)
+    neo_write([to_color(color)]*i, sleep_ms)
     i = (i+1) % NB_LEDS
     if wlan == None:
-        wlan = wlan_init(disp.config["network"])
+        wlan = wlan_init(config["network"], network, sleep_ms)
     if wlan != None:
-        do_connect(wlan, disp.config["network"], disp.config["password"])
+        do_connect(wlan, config["network"], config["password"], sleep_ms)
         if wlan.isconnected():
             break
 
 # display all blue = wifi connected
 color = 0x000064
-disp.all(color)
-sleep_ms(1000)
-disp.all()
+flash(color, sleep_ms)
 
 # define MQTT configuration
 i = 1
-client = MQTTClient(disp.config["name"],
-                    disp.config["broker"], port=disp.config["port"])
 while not client.connect():
-    disp.neo_write([disp.to_color(color)]*i)
+    neo_write([to_color(color)]*i, sleep_ms)
     i = (i+1) % NB_LEDS
     break
-disp.init_mqtt(client)
+init_mqtt(client, sleep_ms)
 
 # display all green = ready
-color = 0x006400
-disp.all(color)
-sleep_ms(1000)
-disp.all()
+flash(0x006400, sleep_ms)

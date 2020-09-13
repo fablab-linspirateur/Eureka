@@ -2,14 +2,14 @@ import unittest
 from sources.ESP8266.configuration import get_config
 
 
-class displayer_test(unittest.TestCase):
+class configuration_test(unittest.TestCase):
     """Test case utilisé pour tester les fonctions de la classe displayer."""
 
     def setUp(self):
         self.CONFIG_EMPTY = "./Tests/config_empty.yaml"
         self.CONFIG_TOTO = "./Tests/config_toto.yaml"
 
-    def test_get_config_no_param(self):
+    def test_get_config_no_arg(self):
         expected = {
             "network": "demo-network",
             "password": "demo-password",
