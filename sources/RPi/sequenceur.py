@@ -22,10 +22,14 @@ def receptionMessages():
 
 	
 def Scan2Ident(scanvalue):
-	"0010566601000 -> 105666"
-	if len(scanvalue) == 13:
+	"""0010566601000 -> 105666
+	105666 -> 105666 """
+	taille = len(scanvalue)
+	if  taille == 13:
 		return scanvalue[2:8]
 	else:
+		if taille == 6:
+			return scanvalue
 		return None
 		
 class Machine(Thread):
@@ -84,8 +88,9 @@ class Machine(Thread):
 		self.client.loop_start()
 	
 	def identspour(self,ident_produit):
-		print("recherche:{} dans {}".format(ident_produit,self.df_idents))
+		print("recherche:{} ".format(ident_produit))
 		_idents = self.df_idents[ident_produit]
+		print("trouve: {}".format(_idents))
 		return _idents
 		
 	def enCours(self):
