@@ -1,0 +1,18 @@
+name: eureka
+version: '1.0'
+summary: Super Cool App
+description: Super Cool App that does everything!
+
+confinement: strict
+base: core18
+
+parts:
+  eureka:
+    plugin: flutter
+    source: https://github.com/kenvandine/super-cool-app.git
+    flutter-target: lib/main.dart
+
+apps:
+  eureka:
+    command: super_cool_app
+    extensions: [flutter-dev]
