@@ -2,6 +2,7 @@ NB_LEDS = 150
 LED_OFF = (0, 0, 0)
 component_leds = {}
 components = []
+backgrounds = {}
 COLOR_BLACK = 0x000000
 MAX_COLOR = 4
 
@@ -41,6 +42,15 @@ def display_error(message, color):
     return
 
 
+def display_background(component, color, comps=components, backs=backgrounds):
+    # change the background color of a component
+    if component in comps:
+        if component in backs.keys():
+            del(backs[component])
+        else:
+            backs[component] = color
+
+
 def neo_write(t_color, sleep, nb=NB_LEDS):
     # write a table of colors to neopixel
     import machine
@@ -60,15 +70,18 @@ def to_color(color):
     return (r, v, b)
 
 
-def to_neopixel(comps=components, cleds=component_leds):
+def to_neopixel(comps=components, cleds=component_leds, backs=backgrounds):
     result = []
     for component in comps:
-        blacks = [LED_OFF]*(5 - len(cleds[component]))
-        result += blacks
+        bg = LED_OFF
+        if component in backs.keys():
+            bg = to_color(backs[component])
+        backs = [bg]*(5 - len(cleds[component]))
+        result += backs
         for color in cleds[component]:
             neocolor = to_color(color)
             result += [neocolor]*2
-        result += blacks
+        result += backs
     return result
 
 

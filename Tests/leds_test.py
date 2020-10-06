@@ -1,5 +1,5 @@
 import unittest
-from sources.ESP8266.leds import init_component_leds, to_color, component_leds, display_component, turn_off, LED_OFF, turn_all, to_neopixel, add, remove, COLOR_BLACK, MAX_COLOR
+from sources.ESP8266.leds import init_component_leds, to_color, component_leds, display_component, display_background, turn_off, LED_OFF, turn_all, to_neopixel, add, remove, COLOR_BLACK, MAX_COLOR
 
 
 class leds_test(unittest.TestCase):
@@ -9,6 +9,7 @@ class leds_test(unittest.TestCase):
         self.COMPONENT_ONE_ID = "123"
         self.COMPONENT_TWO_ID = "456"
         self.component_leds = {}
+        self.backgrounds = {}
         self.NB_LEDS = 10
 
     def test_init_component_leds_empty(self):
@@ -41,6 +42,18 @@ class leds_test(unittest.TestCase):
         self.assertIn(self.COMPONENT_ONE_ID, self.component_leds)
         self.assertEqual(0, len(self.component_leds[self.COMPONENT_ONE_ID]))
         self.assertNotIn("unexisting", self.component_leds)
+
+    def test_display_background_unexisting(self):
+        components = [self.COMPONENT_ONE_ID]
+        display_background("unexisting", 0x006400,
+                           components, self.backgrounds)
+        self.assertNotIn(self.COMPONENT_ONE_ID, self.backgrounds.keys())
+
+    def test_display_background_existing(self):
+        components = [self.COMPONENT_ONE_ID]
+        display_background(self.COMPONENT_ONE_ID, 0x006400,
+                           components, self.backgrounds)
+        self.assertIn(self.COMPONENT_ONE_ID, self.backgrounds.keys())
 
     def test_turn_off_if_present(self):
         self.component_leds[self.COMPONENT_ONE_ID] = [
@@ -139,6 +152,24 @@ class leds_test(unittest.TestCase):
                     (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0)]
         result = to_neopixel(
             [self.COMPONENT_ONE_ID, self.COMPONENT_TWO_ID], self.component_leds)
+        self.assertEqual(expected, result)
+
+    def test_to_neopixel_one_no_color_one_background(self):
+        self.component_leds[self.COMPONENT_ONE_ID] = []
+        self.backgrounds = {self.COMPONENT_ONE_ID: 0xff0000}
+        expected = [(255, 0, 0), (255, 0, 0), (255, 0, 0), (255, 0, 0), (255, 0, 0),
+                    (255, 0, 0), (255, 0, 0), (255, 0, 0), (255, 0, 0), (255, 0, 0)]
+        result = to_neopixel([self.COMPONENT_ONE_ID],
+                             self.component_leds, self.backgrounds)
+        self.assertEqual(expected, result)
+
+    def test_to_neopixel_one_one_color_one_background(self):
+        self.component_leds[self.COMPONENT_ONE_ID] = [0x640000]
+        self.backgrounds = {self.COMPONENT_ONE_ID: 0xff0000}
+        expected = [(255, 0, 0), (255, 0, 0), (255, 0, 0), (255, 0, 0), (100, 0, 0),
+                    (100, 0, 0), (255, 0, 0), (255, 0, 0), (255, 0, 0), (255, 0, 0)]
+        result = to_neopixel([self.COMPONENT_ONE_ID],
+                             self.component_leds, self.backgrounds)
         self.assertEqual(expected, result)
 
     def test_add_to_empty(self):
