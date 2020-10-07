@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="8db8eaaf-9334-44ab-a6c6-b27409ce55b2" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/Demo_alarm.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/alarm.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/analyseIdents.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/configuration.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/get-pip.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gethidraw.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scanner.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scanner.service" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/sequenceur.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ystemctl reset-failed" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="1iIuJMXBAXX4bPakGHRTDAYH9Lt" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+  </component>
+  <component name="RunManager">
+    <configuration name="py" type="PythonConfigurationType" factoryName="Python">
+      <module name="RPi" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="$USER_HOME$/dev/anaconda3/bin/python" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="8db8eaaf-9334-44ab-a6c6-b27409ce55b2" name="Default Changelist" comment="" />
+      <created>1601607355792</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1601607355792</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="UnknownFeatures">
+    <option featureType="com.intellij.fileTypeFactory" implementationName="*.service" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="454" y="211" width="1084" height="736" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1601607514121">
+      <screen x="72" y="27" width="1848" height="1053" />
+    </state>
+    <state x="454" y="211" width="1084" height="736" key="#com.intellij.execution.impl.EditConfigurationsDialog/72.27.1848.1053@72.27.1848.1053" timestamp="1601607514121" />
+    <state x="774" y="300" width="424" height="520" key="FileChooserDialogImpl" timestamp="1601646428077">
+      <screen x="72" y="27" width="1848" height="1053" />
+    </state>
+    <state x="774" y="300" width="424" height="520" key="FileChooserDialogImpl/72.27.1848.1053@72.27.1848.1053" timestamp="1601646428077" />
+    <state width="688" height="319" key="GridCell.Tab.0.bottom" timestamp="1601608490572">
+      <screen x="72" y="27" width="1848" height="1053" />
+    </state>
+    <state width="688" height="319" key="GridCell.Tab.0.bottom/72.27.1848.1053@72.27.1848.1053" timestamp="1601608490572" />
+    <state width="688" height="319" key="GridCell.Tab.0.center" timestamp="1601608490572">
+      <screen x="72" y="27" width="1848" height="1053" />
+    </state>
+    <state width="688" height="319" key="GridCell.Tab.0.center/72.27.1848.1053@72.27.1848.1053" timestamp="1601608490572" />
+    <state width="688" height="319" key="GridCell.Tab.0.left" timestamp="1601608490571">
+      <screen x="72" y="27" width="1848" height="1053" />
+    </state>
+    <state width="688" height="319" key="GridCell.Tab.0.left/72.27.1848.1053@72.27.1848.1053" timestamp="1601608490571" />
+    <state width="688" height="319" key="GridCell.Tab.0.right" timestamp="1601608490572">
+      <screen x="72" y="27" width="1848" height="1053" />
+    </state>
+    <state width="688" height="319" key="GridCell.Tab.0.right/72.27.1848.1053@72.27.1848.1053" timestamp="1601608490572" />
+    <state width="688" height="319" key="GridCell.Tab.1.bottom" timestamp="1601608490573">
+      <screen x="72" y="27" width="1848" height="1053" />
+    </state>
+    <state width="688" height="319" key="GridCell.Tab.1.bottom/72.27.1848.1053@72.27.1848.1053" timestamp="1601608490573" />
+    <state width="688" height="319" key="GridCell.Tab.1.center" timestamp="1601608490572">
+      <screen x="72" y="27" width="1848" height="1053" />
+    </state>
+    <state width="688" height="319" key="GridCell.Tab.1.center/72.27.1848.1053@72.27.1848.1053" timestamp="1601608490572" />
+    <state width="688" height="319" key="GridCell.Tab.1.left" timestamp="1601608490572">
+      <screen x="72" y="27" width="1848" height="1053" />
+    </state>
+    <state width="688" height="319" key="GridCell.Tab.1.left/72.27.1848.1053@72.27.1848.1053" timestamp="1601608490572" />
+    <state width="688" height="319" key="GridCell.Tab.1.right" timestamp="1601608490572">
+      <screen x="72" y="27" width="1848" height="1053" />
+    </state>
+    <state width="688" height="319" key="GridCell.Tab.1.right/72.27.1848.1053@72.27.1848.1053" timestamp="1601608490572" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/sequenceur.py</url>
+          <line>116</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>
