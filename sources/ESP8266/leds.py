@@ -48,7 +48,8 @@ def display_background(component, color, comps=components, backs=backgrounds):
     #print(component, color, comps, backs)
     if component in comps:
         if component in backs:
-            del(backs[component])
+            if color == backs[component]:
+                del(backs[component])
         else:
             backs[component] = color
     #print(component, color, comps, backs)
