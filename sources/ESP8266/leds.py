@@ -44,11 +44,14 @@ def display_error(message, color):
 
 def display_background(component, color, comps=components, backs=backgrounds):
     # change the background color of a component
+    # print("display_background")
+    #print(component, color, comps, backs)
     if component in comps:
-        if component in backs.keys():
+        if component in backs:
             del(backs[component])
         else:
             backs[component] = color
+    #print(component, color, comps, backs)
 
 
 def neo_write(t_color, sleep, nb=NB_LEDS):
@@ -72,16 +75,19 @@ def to_color(color):
 
 def to_neopixel(comps=components, cleds=component_leds, backs=backgrounds):
     result = []
+    # print("to_neopixel")
+    #print(comps, cleds, backs)
     for component in comps:
         bg = LED_OFF
-        if component in backs.keys():
+        if component in backs:
             bg = to_color(backs[component])
-        backs = [bg]*(5 - len(cleds[component]))
-        result += backs
+        back_leds = [bg]*(5 - len(cleds[component]))
+        result += back_leds
         for color in cleds[component]:
             neocolor = to_color(color)
             result += [neocolor]*2
-        result += backs
+        result += back_leds
+    #print(comps, cleds, backs)
     return result
 
 
