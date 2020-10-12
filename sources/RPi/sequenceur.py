@@ -54,11 +54,11 @@ class Machine(Thread):
 
         self.client.loop_start()
 
-	def is_compound(self, ident):
-		return len(ident) == 13
+    def is_compound(self, ident):
+        return len(ident) == 13
 
-	def is_component(self, ident):
-		return len(ident) == 6
+    def is_component(self, ident):
+        return len(ident) == 6
 
     def explode_topic(self, topic):
         # retrieve type + info contained in a topic
@@ -72,23 +72,21 @@ class Machine(Thread):
 
     def on_message(self, client, userdata, message):
         print("Reçu:{}:{}".format(message.topic, message.payload))
-		ident = self.explode_topic(message.topic)["info"]
-		if self.is_compound(ident):
-			_compound = ident[2:8]
-			_components = self.composantspour(_compound)
-			print(_compound, _components)
+        ident = self.explode_topic(message.topic)["info"]
+        if self.is_compound(ident):
+            _compound = ident[2:8]
+            _components = self.composantspour(_compound)
+            print(_compound, _components)
             print("publish: {}:{}".format(TOPIC_END, message.payload))
             self.client.publish(
                 topic=TOPIC_END, payload=message.payload, qos=0, retain=False)
-			if _components != None:
-				for ident in _components:
-					print("publish: {}/{}:{}".format(TOPIC_SEARCH_BASE,
-													ident, message.payload))
-					self.client.publish(topic=TOPIC_SEARCH_BASE+"/{}".format(ident),
-										payload=message.payload, qos=0, retain=False)
-		elif self.is_component(ident):
-			self.client.publish(topic=TOPIC_BACKGROUND_BASE+"/{}".format(ident),
-										payload=message.payload, qos=0, retain=False)
+            if _components != None:
+                for ident in _components:
+                    print("publish: {}/{}:{}".format(TOPIC_SEARCH_BASE,ident, message.payload))
+                    self.client.publish(topic=TOPIC_SEARCH_BASE+"/{}".format(ident),
+                    payload=message.payload, qos=0, retain=False)
+        elif self.is_component(ident):
+            self.client.publish(topic=TOPIC_BACKGROUND_BASE+"/{}".format(ident),payload=message.payload, qos=0, retain=False)
 
     def read_csv(self):
         f = open("idents.csv", "r")
@@ -113,8 +111,11 @@ class Machine(Thread):
 
     def run(self):
         while not self.fini:
-            self.Etats[self.state]["Action"]()
-            self.state = self.Etats[self.state]["EtatSuivant"]
+            try:
+                self.Etats[self.state]["Action"]()
+                self.state = self.Etats[self.state]["EtatSuivant"]
+            except:
+                pass
             # self.client.loop() loop_start à la place ?
         self.client.loop_stop()
 
