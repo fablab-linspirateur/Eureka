@@ -1,6 +1,6 @@
 from configuration import get_config
 from leds import init_nb_leds
-from umqtt.robust import MQTTClient
+from umqtt.simple import MQTTClient
 
 # define configuration
 NB_LEDS = 150
