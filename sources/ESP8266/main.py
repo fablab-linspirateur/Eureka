@@ -4,6 +4,8 @@ from utime import sleep_ms
 from leds import init_component_leds, turn_all, flash, to_color, neo_write
 import network
 
+mqttCnxTrials = 1
+
 while True:
 
     if wlan == None or not wlan.isconnected():
@@ -23,19 +25,27 @@ while True:
                 if wlan.isconnected():
                     break
 
+        mqttCnxTrials = 1
+
         # display all blue = wifi connected
         color = 0x000064
         flash(color, sleep_ms)
 
-        # define MQTT configuration
-        i = 1
-        while not client.connect():
-            neo_write([to_color(color)]*i, sleep_ms)
-            i = (i+1) % NB_LEDS
-            break
-        init_mqtt(client, sleep_ms)
+    try:
+        client.check_msg()
+    except:
+        try:
 
-        # display all green = ready
-        flash(0x006400, sleep_ms)
+            client.connect():
+            init_mqtt(client, sleep_ms)
 
-    client.check_msg()
+            mqttCnxTrials = 1
+
+            # display all green = ready
+            flash(0x006400, sleep_ms)
+
+        except:
+            print("No MQTT server available")
+            neo_write([to_color(color)]*mqttCnxTrials, sleep_ms)
+            mqttCnxTrials = (mqttCnxTrials+1) % NB_LEDS
+            sleep_ms(1000)
