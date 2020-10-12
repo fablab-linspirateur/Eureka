@@ -10,13 +10,14 @@ def init_mqtt(client, sleep_ms):
     # initialize mqtt subscriptions
 
     from components import components, write_components
-    from leds import init_component_leds, neo_write, to_neopixel, display_component, turn_off, display_error, display_background
+    from leds import init_component_leds, neo_write, to_neopixel, display_component, turn_off, display_error, display_background, backgrounds
     init_component_leds(components)
 
     def refresh(topic, payload):
         # refresh display on topic action
         from topics import explode_topic
         etopic = explode_topic(topic.decode("utf-8"))
+        #print(etopic, payload)
         if etopic["base"] == TOPIC_SEARCH_BASE:
             display_component(etopic["info"], int(payload))
         elif etopic["base"] == TOPIC_END:
@@ -24,7 +25,8 @@ def init_mqtt(client, sleep_ms):
         elif etopic["base"] == TOPIC_ERROR_BASE:
             display_error(etopic["info"], int(payload))
         elif etopic["base"] == TOPIC_BACKGROUND_BASE:
-            display_background(etopic["info"], int(payload))
+            display_background(etopic["info"], int(
+                payload), components, backgrounds)
         elif etopic["base"] == TOPIC_CONFIG and etopic["info"] == client.client_id:
             # TODO créer une fonction de changement de config
             write_components(payload)
