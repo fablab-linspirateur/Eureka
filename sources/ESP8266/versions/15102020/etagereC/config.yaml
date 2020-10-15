@@ -1,0 +1,5 @@
+network: raspi-poste1
+password: Burkert67
+name: EtagereC
+broker: 10.3.141.1
+port: 1883
